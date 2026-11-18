@@ -122,7 +122,9 @@ export function LessonStep({
           progress === "completed" ? "text-good" : progress === "in_progress" ? "text-accent" : "text-faint",
         )}
       />
-      <span className="w-9 shrink-0 font-mono text-xs text-muted tabular-nums">{number}</span>
+      <span aria-hidden="true" className="w-9 shrink-0 font-mono text-xs text-muted tabular-nums">
+        {number}
+      </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[0.9375rem] font-medium text-ink underline-offset-4 group-hover:underline">
           <span className="sr-only">Lesson {number}: </span>
