@@ -34,7 +34,7 @@ export default async function ReviewStartPage({ params }: Props) {
   const header = (
     <PageHeader
       breadcrumbs={[
-        { label: "Courses", href: "/app/courses" },
+        { label: "My courses", href: "/app/courses" },
         { label: tree.course.name, href: `/app/courses/${courseId}` },
         { label: "Review" },
       ]}

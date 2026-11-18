@@ -47,7 +47,7 @@ export default async function AttemptPage({ params }: Props) {
   const badge = modeBadgeText({ mode: view.mode, assistance: view.assistance, feedback: view.feedback, timeLimitMinutes: minutes });
   const submitted = view.status === "submitted";
   const breadcrumbs = [
-    { label: "Courses", href: "/app/courses" },
+    { label: "My courses", href: "/app/courses" },
     ...(courseName ? [{ label: courseName, href: `/app/courses/${view.courseId}` }] : []),
     { label: submitted ? "Results" : view.title },
   ];

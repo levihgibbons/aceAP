@@ -58,7 +58,7 @@ Assessment ─ ordered question list + config (timing, feedback, assistance)
 |---|---|---|---|---|---|---|
 | AP Calculus AB | Unit 2 core derivative rules → Unit 3 the chain rule | 9 | 5 | 56 | skill quiz, lesson quiz, unit test (chain-rule portion), exam practice set | Derivative Explorer |
 | AP Microeconomics | Unit 3 production, costs, profit maximisation, shutdown | 9 | 5 | 55 | skill quiz, lesson quiz, unit test (firm portion), exam practice set | Firm Behavior Lab |
-| AP Physics 1 | Unit 1 one-dimensional kinematics | 9 | 5 | 55 | skill quiz, lesson quiz, unit test (1-D), exam practice set | Motion Lab |
+| AP Physics 1 | Unit 1 kinematics (full unit: 1-D motion and graphs, constant acceleration and free fall, vectors and components, reference frames and relative motion, projectile motion) | 15 | 10 | 99 | 3 skill quizzes, 2 lesson quizzes, unit test (whole unit), 2 exam practice sets | Motion Lab |
 
 All lesson and question text is original AceAP content (AI-assisted, machine-
 validated; human subject-matter review is still required before school use —

@@ -15,8 +15,13 @@ export function TopBar({ user, area, homeHref }: { user: SessionUser; area: Shel
     <header className="sticky top-0 z-30 border-b border-line bg-surface">
       <div className="flex h-14 items-center gap-3 px-4 sm:px-6 lg:px-10">
         <Link href={homeHref} className="shrink-0 rounded-lg lg:hidden" aria-label="AceAP home">
-          <Logo showWordmark={false} className="sm:hidden" />
-          <Logo className="hidden sm:inline-flex" />
+          {/* Wrappers carry the display classes: cn() does not merge conflicting utilities. */}
+          <span className="sm:hidden">
+            <Logo showWordmark={false} />
+          </span>
+          <span className="hidden sm:inline">
+            <Logo />
+          </span>
         </Link>
         {area === "student" ? (
           <GlobalSearchBox className="min-w-0 flex-1" />

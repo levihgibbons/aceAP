@@ -15,11 +15,22 @@ import { DemoBanner } from "./DemoBanner";
 import { MobileNav } from "./MobileNav";
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
-import { SIDEBAR_COOKIE, type ShellArea } from "./nav";
+import { SIDEBAR_COOKIE, type ShellArea, type ShellCourse } from "./nav";
 
 const HOME: Record<ShellArea, string> = { student: "/app", staff: "/teacher", admin: "/admin" };
 
-export async function AppShell({ user, area, children }: { user: SessionUser; area: ShellArea; children: ReactNode }) {
+export async function AppShell({
+  user,
+  area,
+  courses,
+  children,
+}: {
+  user: SessionUser;
+  area: ShellArea;
+  /** Student area: the courses listed under the navigation. */
+  courses?: ShellCourse[];
+  children: ReactNode;
+}) {
   const jar = await cookies();
   const collapsed = jar.get(SIDEBAR_COOKIE)?.value === "collapsed";
   const isPlatformAdmin = user.role === "platform_admin";
@@ -33,7 +44,7 @@ export async function AppShell({ user, area, children }: { user: SessionUser; ar
       >
         Skip to content
       </a>
-      <Sidebar area={area} isPlatformAdmin={isPlatformAdmin} defaultCollapsed={collapsed} homeHref={homeHref} />
+      <Sidebar area={area} isPlatformAdmin={isPlatformAdmin} defaultCollapsed={collapsed} homeHref={homeHref} courses={courses} />
       <div className="flex min-w-0 flex-1 flex-col">
         {user.isDemo ? <DemoBanner /> : null}
         <TopBar user={user} area={area} homeHref={homeHref} />
@@ -41,7 +52,7 @@ export async function AppShell({ user, area, children }: { user: SessionUser; ar
           <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">{children}</div>
         </main>
       </div>
-      <MobileNav area={area} isPlatformAdmin={isPlatformAdmin} />
+      <MobileNav area={area} isPlatformAdmin={isPlatformAdmin} courses={courses} />
     </div>
   );
 }

@@ -10,15 +10,18 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { LogoMark } from "./Logo";
 import { NavLinks } from "./NavLinks";
-import { AREA_LABEL, SIDEBAR_COOKIE, navFor, type ShellArea } from "./nav";
+import { CourseLinks } from "./CourseLinks";
+import { AREA_LABEL, SIDEBAR_COOKIE, navFor, type ShellArea, type ShellCourse } from "./nav";
 
 export function Sidebar({
   area,
   isPlatformAdmin,
   defaultCollapsed,
   homeHref,
+  courses = [],
 }: {
   area: ShellArea;
+  courses?: ShellCourse[];
   isPlatformAdmin: boolean;
   defaultCollapsed: boolean;
   homeHref: string;
@@ -56,6 +59,12 @@ export function Sidebar({
           <p className="mb-2 px-3 text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-faint">{AREA_LABEL[area]}</p>
         ) : null}
         <NavLinks items={primary} collapsed={collapsed} />
+        {courses.length > 0 ? (
+          <>
+            <div className="mx-3 my-4 h-px bg-line" />
+            <CourseLinks courses={courses} collapsed={collapsed} />
+          </>
+        ) : null}
         {secondary.length > 0 ? (
           <>
             <div className="mx-3 my-4 h-px bg-line" />

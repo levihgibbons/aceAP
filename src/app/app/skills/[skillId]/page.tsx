@@ -151,7 +151,7 @@ export default async function SkillPage({ params }: Params) {
   const peakAbove = x && LEVEL_RANK[x.peakLevel] > LEVEL_RANK[level];
 
   const breadcrumbs = [
-    { label: "Courses", href: "/app/courses" },
+    { label: "My courses", href: "/app/courses" },
     ...(tree ? [{ label: tree.course.name, href: `/app/courses/${tree.course.id}` }] : []),
     ...(tree && unit
       ? [

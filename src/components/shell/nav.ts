@@ -37,12 +37,20 @@ export const SIDEBAR_COOKIE = "aceap_sidebar";
 
 const STUDENT: NavItem[] = [
   { href: "/app", label: "Home", icon: Home, exact: true },
-  { href: "/app/courses", label: "Courses", icon: BookOpen },
+  { href: "/app/courses", label: "My courses", icon: BookOpen, exact: true },
+  { href: "/app/assignments", label: "Assignments", icon: ClipboardList },
   { href: "/app/exam-prep", label: "Exam prep", icon: Target },
   { href: "/app/progress", label: "Progress", icon: LineChart },
   { href: "/app/vault", label: "Knowledge vault", icon: Archive },
-  { href: "/app/assignments", label: "Assignments", icon: ClipboardList },
 ];
+
+/** A course the student is taking, listed under the student navigation. */
+export interface ShellCourse {
+  id: string;
+  name: string;
+}
+
+export const shortCourseName = (name: string) => name.replace(/^AP\s+/, "");
 
 const STAFF: NavItem[] = [
   { href: "/teacher", label: "Overview", icon: LayoutDashboard, exact: true },

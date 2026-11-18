@@ -48,7 +48,7 @@ export default async function PracticeStartPage({ params }: Props) {
   const header = (
     <PageHeader
       breadcrumbs={[
-        { label: "Courses", href: "/app/courses" },
+        { label: "My courses", href: "/app/courses" },
         { label: tree.course.name, href: `/app/courses/${tree.course.id}` },
         { label: "Practice" },
       ]}

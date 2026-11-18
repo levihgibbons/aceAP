@@ -15,6 +15,7 @@ import { getAttemptView, startAttempt } from "@/modules/assessments/service";
 import { requireStudent } from "@/modules/auth/session";
 import { startLesson } from "@/modules/learning/progress";
 import { getCourseOverview } from "@/modules/learning/overview";
+import { lessonNumber } from "@/components/student/roadmap";
 
 interface Props {
   params: Promise<{ lessonId: string }>;
@@ -46,6 +47,7 @@ export default async function LessonPage({ params }: Props) {
   const node = tree.lessons.get(lessonId);
   const unit = tree.units.find((u) => u.id === lesson.unitId);
   const topic = unit?.topics.find((tp) => tp.id === lesson.topicId);
+  const number = lessonNumber(tree, lessonId);
 
   const chip = (id: string): SkillChip | null => {
     const s = tree.skills.get(id);
@@ -95,11 +97,12 @@ export default async function LessonPage({ params }: Props) {
     <>
       <PageHeader
         breadcrumbs={[
-          { label: "Courses", href: "/app/courses" },
+          { label: "My courses", href: "/app/courses" },
           { label: tree.course.name, href: `/app/courses/${courseId}` },
+          ...(unit ? [{ label: `Unit ${unit.number}`, href: `/app/courses/${courseId}/units/${unit.slug}` }] : []),
           { label: lesson.title },
         ]}
-        eyebrow={unit ? `Unit ${unit.number}${topic ? ` · ${topic.title}` : ""}` : undefined}
+        eyebrow={unit ? `${number ? `Lesson ${number} · ` : ""}Unit ${unit.number}${topic ? ` · ${topic.title}` : ""}` : undefined}
         title={lesson.title}
         description={lesson.summary}
         actions={

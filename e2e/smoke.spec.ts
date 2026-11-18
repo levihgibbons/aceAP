@@ -15,7 +15,7 @@ const NAV: Record<
     nav: "Student navigation",
     pages: [
       { href: "/app", label: "Home" },
-      { href: "/app/courses", label: "Courses" },
+      { href: "/app/courses", label: "My courses" },
       { href: "/app/exam-prep", label: "Exam prep" },
       { href: "/app/progress", label: "Progress" },
       { href: "/app/vault", label: "Knowledge vault" },
@@ -97,7 +97,7 @@ test("the catalog lists all 43 AP courses, with AP Networking marked Upcoming", 
   page,
 }) => {
   await signInAs(page, "alex");
-  await page.goto("/app/courses");
+  await page.goto("/app/courses/browse");
   await expect(page.getByRole("heading", { level: 1, name: "AP courses" })).toBeVisible();
   await expect(page.getByText(/^All 43 AP courses College Board publishes\./)).toBeVisible();
   await expect(page.getByText(/^43 courses in \d+ categories\.$/)).toBeVisible();
@@ -163,3 +163,25 @@ for (const [who, url] of [
     ).toBeLessThanOrEqual(clientWidth + 1);
   });
 }
+
+test("my courses are one click away and each course is a numbered roadmap", async ({ page }) => {
+  await signInAs(page, "alex");
+  await page.goto("/app");
+  // The sidebar lists the student's own courses.
+  const yourCourses = page.locator('nav[aria-label="Student navigation"]').getByRole("list", { name: "Your courses" });
+  await expect(yourCourses.getByRole("link", { name: /Calculus AB/ })).toBeVisible();
+
+  await page.getByRole("navigation", { name: "Student navigation" }).getByRole("link", { name: "My courses" }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "My courses" })).toBeVisible();
+  const card = page.getByRole("article", { name: "AP Calculus AB" });
+  await expect(card.getByRole("link", { name: /Open the AP Calculus AB roadmap/ })).toBeVisible();
+
+  await card.getByRole("link", { name: /Open the AP Calculus AB roadmap/ }).click();
+  await expect(page.getByRole("heading", { level: 2, name: "Roadmap" })).toBeVisible();
+  const roadmap = page.getByRole("list", { name: "AP Calculus AB roadmap" });
+  await expect(roadmap.getByRole("link", { name: /Lesson 3\.2: The chain rule/ })).toBeVisible();
+  // Outline-only units are listed, but say plainly that lessons come later.
+  await expect(roadmap.getByText("Lessons coming later").first()).toBeVisible();
+  // Exactly one "up next" step on the path.
+  await expect(roadmap.getByText("Up next", { exact: true })).toHaveCount(1);
+});

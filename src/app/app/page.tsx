@@ -8,7 +8,6 @@ import {
   NotebookPen,
   RotateCcw,
   Target,
-  Users,
 } from "lucide-react";
 import { asUser } from "@/db/client";
 import {
@@ -28,8 +27,6 @@ import {
 import { AssignmentList } from "@/components/student/AssignmentList";
 import {
   CompletionMeter,
-  ContentStatusBadge,
-  MasteryOverview,
   MiniLabel,
 } from "@/components/student/Bits";
 import { firstName, pct } from "@/components/student/format";
@@ -182,6 +179,7 @@ export default async function StudentHomePage() {
         .filter((r) => r.kind !== "assignment")
         .map((r) => ({ r, courseName: d.course.name })),
     )
+    .filter(({ r }) => !(resume && resume.mode !== "done" && r.href === `/app/learn/${resume.lessonId}`))
     .sort((a, b) => b.r.priority - a.r.priority)
     .slice(0, 5);
   const open = assignments
@@ -226,7 +224,45 @@ export default async function StudentHomePage() {
 
       {resume ? <ContinueCard resume={resume} /> : null}
 
-      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <Section
+        title="My courses"
+        id="my-courses"
+        action={
+          <ButtonLink href="/app/courses" variant="link" size="sm">
+            All my courses
+          </ButtonLink>
+        }
+      >
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {data.map(({ course, o }) => (
+            <li key={course.courseId}>
+              <div className="group relative flex h-full flex-col rounded-card border border-line bg-surface p-4 shadow-card transition-[border-color,transform] hover:-translate-y-0.5 hover:border-line-strong">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h3 className="truncate font-display font-semibold text-ink">
+                      <Link
+                        href={`/app/courses/${course.courseId}`}
+                        className="underline-offset-4 after:absolute after:inset-0 after:rounded-card group-hover:underline"
+                      >
+                        {course.name}
+                      </Link>
+                    </h3>
+                    <p className="truncate text-xs text-muted">{course.className ?? "Learning on your own"}</p>
+                  </div>
+                  <ArrowRight aria-hidden="true" className="mt-1 size-4 shrink-0 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-ink-2" />
+                </div>
+                {o.rollups.course.totalSkills > 0 ? (
+                  <CompletionMeter completed={o.lessonsCompleted} total={o.lessonsTotal} size="sm" className="mt-4" />
+                ) : (
+                  <p className="mt-4 text-xs text-muted">Outline only for now</p>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <div className="mt-2 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <Section
           title="Today's learning"
           description="Suggested from your answers. Each one says why."
@@ -332,80 +368,6 @@ export default async function StudentHomePage() {
           </Section>
         </div>
       </div>
-
-      <Section
-        title="My courses"
-        id="my-courses"
-        description="Lessons finished and mastery are tracked separately: finishing a lesson isn't the same as showing you know it."
-        action={
-          <ButtonLink href="/app/courses" variant="link" size="sm">
-            Browse courses
-          </ButtonLink>
-        }
-      >
-        <ul className="grid gap-4 md:grid-cols-2">
-          {data.map(({ course, o }) => (
-            <li key={course.courseId}>
-              <Card interactive className="h-full">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="font-display text-[1.0625rem] font-semibold leading-snug text-ink">
-                      <Link
-                        href={`/app/courses/${course.courseId}`}
-                        className="after:absolute after:inset-0 after:rounded-card hover:underline underline-offset-4"
-                      >
-                        {course.name}
-                      </Link>
-                    </h3>
-                    <p className="mt-0.5 text-xs text-muted">
-                      {course.className ?? "Learning independently"}
-                      {course.lastActivityAt ? (
-                        <> · active {formatRelativeTime(course.lastActivityAt, now)}</>
-                      ) : null}
-                    </p>
-                  </div>
-                  <ContentStatusBadge status={course.contentStatus} className="shrink-0" />
-                </div>
-                {o.rollups.course.totalSkills > 0 ? (
-                  <div className="mt-5 grid gap-5 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2">
-                    <div>
-                      <MiniLabel>Completion</MiniLabel>
-                      <CompletionMeter
-                        completed={o.lessonsCompleted}
-                        total={o.lessonsTotal}
-                        size="sm"
-                      />
-                    </div>
-                    <div>
-                      <MiniLabel>Mastery</MiniLabel>
-                      <MasteryOverview
-                        rollup={o.rollups.course}
-                        label={`${course.name} skill mastery`}
-                        size="sm"
-                        showLevel={false}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <p className="mt-4 text-sm text-muted">
-                    AceAP doesn&apos;t have lessons for this course yet, so there&apos;s nothing to
-                    track.
-                  </p>
-                )}
-              </Card>
-            </li>
-          ))}
-        </ul>
-        <details className="group mt-4 rounded-card border border-line bg-surface-2 px-5 py-3">
-          <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-ink-2 [&::-webkit-details-marker]:hidden">
-            <Users aria-hidden="true" className="size-4 text-faint" />
-            Have a class join code?
-          </summary>
-          <div className="pb-2 pt-4">
-            <JoinClassForm idPrefix="more-join" />
-          </div>
-        </details>
-      </Section>
 
       <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2">
         <Section title="AP exam preparation" id="exam-prep" className="mt-0!">

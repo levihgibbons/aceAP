@@ -16,7 +16,7 @@ Last updated: 2026-11-18.
 | 2 — Learning and assessment | Content schema + validator + versioned sync, lesson player (all block types), question engine (7 types), deterministic grading, attempts for every mode | Tested |
 | 3 — Mastery intelligence | Evidence model, estimator, sufficiency/diversity rules, policies + versions + snapshots, rollups, retention schedule, misconceptions, recommendations | Tested |
 | 4 — Teacher classroom | Classes/join codes/rosters, assignments + targeting + accommodations, gradebook + grading policies + overrides + CSV, heatmap + drill-down, student profiles, interventions, engagement | Tested (services); UI Implemented |
-| 5 — Pilot subjects | Calculus AB (chain rule), Microeconomics (firm costs/profit max), Physics 1 (1-D kinematics); 3 native simulations; cross-course relationships | Tested (content validator, simulation models) |
+| 5 — Pilot subjects | Calculus AB (chain rule), Microeconomics (firm costs/profit max), Physics 1 (Unit 1 kinematics: 1-D, vectors, relative motion, projectiles); 3 native simulations; cross-course relationships | Tested (content validator, simulation models) |
 | 6 — Knowledge vault | Notes, wiki links, backlinks, concept pages, graph, sharing, JSON/Markdown export | Tested |
 | 7 — AI tutor | Provider abstraction (Anthropic), context assembly with data minimisation, policy enforcement, assistance recording, metering | Tested with a fake provider; **live provider not exercised (no API key)** |
 | 8 — Canvas / LTI 1.3 | OIDC login, launch + explicit account linking, deep-linking activity picker, teacher-approved grade passback from the gradebook, `lms:sync` worker with back-off, SSRF allow-list + DNS-rebinding guard with connection pinning, AGS, NRPS, roster review (proposals only), sync jobs, diagnostics, integrations UI | Tested against an in-process mock platform; **Blocked** for real validation (needs a Canvas sandbox + developer key) |
@@ -36,18 +36,18 @@ Last updated: 2026-11-18.
 | F | Grade policy change is previewed, published and reflected; evidence unchanged | `tests/gradebook.test.ts`, `tests/flow.test.ts` ✅ | `e2e/demo-f-grade-policy.spec.ts` ✅ |
 | G | Another school's teacher is refused by services **and** the database | `tests/authorization.test.ts` ✅ | `e2e/demo-g-tenant-isolation.spec.ts` ✅ |
 
-Browser results: **44/44 Playwright tests pass** against a production build with a freshly seeded database (Chrome, ~1.8 min): the A–G demonstrations, auth/role redirects, password reset and account deletion, every main page for each role, the 43-course catalog, the web manifest, no horizontal scroll at 360 px, CSP/security headers with zero CSP violations, and axe WCAG 2.1 A/AA scans (no serious/critical violations) plus keyboard checks.
+Browser results: **45/45 Playwright tests pass** against a production build with a freshly seeded database (Chrome, ~1.8 min): the A–G demonstrations, auth/role redirects, password reset and account deletion, every main page for each role, the 43-course catalog, the My courses → numbered course roadmap flow, the web manifest, no horizontal scroll at 360 px, CSP/security headers with zero CSP violations, and axe WCAG 2.1 A/AA scans (no serious/critical violations) plus keyboard checks.
 
 ## Verification log (2026-11-18)
 
 - `npm run typecheck` — 0 errors.
 - `npm run lint` — 0 errors, 0 warnings.
-- `npm run test:e2e` — 44 passed, 0 failed.
+- `npm run test:e2e` — 45 passed, 0 failed (incl. the new My courses / roadmap smoke test).
 - `npm test` — 18 files, 326 tests passed (incl. `tests/rate-limit.test.ts` — shared
   rate limits and LTI nonces — and `tests/cron.test.ts`).
 - Deployed to Vercel (<https://aceap-five.vercel.app>) on Neon Postgres 18:
   migrations, content and demo seed applied; see docs/DEPLOYMENT.md.
-- `npm run content:validate` — 3 courses OK (166 questions run through the grader).
+- `npm run content:validate` — 3 courses OK (210 questions run through the grader).
 - `npm run build:e2e` (production build) — succeeded; all routes compiled.
 - Manual browser pass (dev server, dark theme): landing, demo sign-in, student
   home, chain-rule lesson (KaTeX, worked example, Derivative Explorer, check

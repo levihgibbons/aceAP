@@ -74,6 +74,9 @@ test.describe("axe scans", () => {
       if (theme === "dark") return; // the rest of the dark subset runs below
       await page.goto("/app/courses");
       await h1(page);
+      await audit.scan(page, "my courses");
+      await page.goto("/app/courses/browse");
+      await h1(page);
       await audit.scan(page, "catalog");
     });
 

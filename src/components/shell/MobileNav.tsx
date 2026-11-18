@@ -8,9 +8,10 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import { Drawer } from "@/components/ui/Dialog";
 import { BottomNavLink, NavLinks } from "./NavLinks";
-import { AREA_LABEL, navFor, type ShellArea } from "./nav";
+import { CourseLinks } from "./CourseLinks";
+import { AREA_LABEL, navFor, type ShellArea, type ShellCourse } from "./nav";
 
-export function MobileNav({ area, isPlatformAdmin }: { area: ShellArea; isPlatformAdmin: boolean }) {
+export function MobileNav({ area, isPlatformAdmin, courses = [] }: { area: ShellArea; isPlatformAdmin: boolean; courses?: ShellCourse[] }) {
   const [open, setOpen] = useState(false);
   const { primary, secondary } = navFor(area, { isPlatformAdmin });
   const all = [...primary, ...secondary];
@@ -49,6 +50,12 @@ export function MobileNav({ area, isPlatformAdmin }: { area: ShellArea; isPlatfo
         <Drawer open={open} onClose={() => setOpen(false)} title={`${AREA_LABEL[area]} menu`}>
           <nav aria-label={`${AREA_LABEL[area]} navigation (full)`}>
             <NavLinks items={primary} onNavigate={() => setOpen(false)} />
+            {courses.length > 0 ? (
+              <>
+                <div className="my-3 h-px bg-line" />
+                <CourseLinks courses={courses} onNavigate={() => setOpen(false)} />
+              </>
+            ) : null}
             {secondary.length > 0 ? (
               <>
                 <div className="my-3 h-px bg-line" />
