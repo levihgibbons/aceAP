@@ -74,8 +74,8 @@ export async function requestPasswordReset(rawEmail: string, clientKey: string, 
   if (!parsed.success) throw new DomainError("invalid", parsed.error.issues[0]?.message ?? "Enter a valid email address.");
   const email = parsed.data;
 
-  const byEmail = rateLimit(`reset:email:${email}`, RESET_LIMITS.perEmail.limit, RESET_LIMITS.perEmail.windowMs, now.getTime());
-  const byClient = rateLimit(`reset:client:${clientKey}`, RESET_LIMITS.perClient.limit, RESET_LIMITS.perClient.windowMs, now.getTime());
+  const byEmail = await rateLimit(`reset:email:${email}`, RESET_LIMITS.perEmail.limit, RESET_LIMITS.perEmail.windowMs, now.getTime());
+  const byClient = await rateLimit(`reset:client:${clientKey}`, RESET_LIMITS.perClient.limit, RESET_LIMITS.perClient.windowMs, now.getTime());
   if (!byEmail.allowed || !byClient.allowed) {
     const wait = Math.max(byEmail.retryAfterSeconds, byClient.retryAfterSeconds);
     throw new DomainError("rate_limited", `Too many reset requests. Try again in about ${minutes(wait)}.`);
@@ -142,7 +142,7 @@ export async function resetPasswordWithToken(
   clientKey: string,
   now: Date = new Date(),
 ): Promise<SessionUser> {
-  const limit = rateLimit(`reset:redeem:${clientKey}`, RESET_LIMITS.redeemPerClient.limit, RESET_LIMITS.redeemPerClient.windowMs, now.getTime());
+  const limit = await rateLimit(`reset:redeem:${clientKey}`, RESET_LIMITS.redeemPerClient.limit, RESET_LIMITS.redeemPerClient.windowMs, now.getTime());
   if (!limit.allowed) throw new DomainError("rate_limited", `Too many attempts. Try again in about ${minutes(limit.retryAfterSeconds)}.`);
 
   const password = newPasswordSchema.safeParse(input.password);
@@ -203,7 +203,7 @@ export async function changePassword(
   if (!row) throw new DomainError("unauthenticated", "Sign in to continue.");
 
   // Every attempt counts, so the limit also caps guessing of the current password.
-  const limit = rateLimit(`password-change:${user.id}`, RESET_LIMITS.changePerUser.limit, RESET_LIMITS.changePerUser.windowMs, now.getTime());
+  const limit = await rateLimit(`password-change:${user.id}`, RESET_LIMITS.changePerUser.limit, RESET_LIMITS.changePerUser.windowMs, now.getTime());
   if (!limit.allowed) throw new DomainError("rate_limited", `Too many attempts. Try again in about ${minutes(limit.retryAfterSeconds)}.`);
   const ok = await verifyPassword(input.currentPassword ?? "", row.passwordHash ?? DUMMY_HASH);
   if (!ok) throw new AccountFieldError("currentPassword", "Your current password isn't right.");

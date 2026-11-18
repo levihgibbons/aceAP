@@ -14,6 +14,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   date,
   doublePrecision,
@@ -1330,4 +1331,36 @@ export const emailOutbox = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index("email_outbox_created_idx").on(t.createdAt)],
+);
+
+/**
+ * Shared sliding-window rate-limit buckets (src/lib/rate-limit.ts), so limits
+ * hold across serverless instances. `hits` holds the epoch-millisecond times of
+ * the allowed requests still inside the window. Service-only: row-level
+ * security is on and the restricted role has no grants (migration 0007).
+ * Rows past `expires_at` carry no state and are pruned opportunistically.
+ */
+export const rateLimitBuckets = pgTable(
+  "rate_limit_buckets",
+  {
+    key: text("key").primaryKey(),
+    hits: bigint("hits", { mode: "number" }).array().notNull(),
+    allowed: boolean("allowed").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  },
+  (t) => [index("rate_limit_buckets_expires_idx").on(t.expiresAt)],
+);
+
+/**
+ * LTI id_token nonces already used (replay protection shared across serverless
+ * instances; src/modules/integrations/lms/lti/launch.ts → DatabaseNonceStore).
+ * Service-only (migration 0009). A row past `expires_at` may be reused/pruned.
+ */
+export const ltiNonces = pgTable(
+  "lti_nonces",
+  {
+    nonce: text("nonce").primaryKey(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  },
+  (t) => [index("lti_nonces_expires_idx").on(t.expiresAt)],
 );

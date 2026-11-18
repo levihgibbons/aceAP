@@ -117,7 +117,7 @@ export async function createClass(user: StaffUser, input: z.infer<typeof createC
 
 export async function joinClassByCode(student: StaffUser, rawCode: string): Promise<{ classId: string; className: string; courseId: string; alreadyMember: boolean }> {
   if (student.role !== "student") throw new DomainError("forbidden", "Only student accounts can join a class.");
-  const limit = rateLimit(`join:${student.id}`, 10, 10 * 60_000);
+  const limit = await rateLimit(`join:${student.id}`, 10, 10 * 60_000);
   if (!limit.allowed) throw new DomainError("rate_limited", "Too many attempts. Please wait a few minutes and try again.");
   const code = rawCode.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (code.length < 5) throw new DomainError("invalid", "Enter the join code your teacher gave you.");

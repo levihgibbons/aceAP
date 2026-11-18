@@ -43,7 +43,10 @@ Browser results: **44/44 Playwright tests pass** against a production build with
 - `npm run typecheck` — 0 errors.
 - `npm run lint` — 0 errors, 0 warnings.
 - `npm run test:e2e` — 44 passed, 0 failed.
-- `npm test` — 16 files, 315 tests passed.
+- `npm test` — 18 files, 326 tests passed (incl. `tests/rate-limit.test.ts` — shared
+  rate limits and LTI nonces — and `tests/cron.test.ts`).
+- Deployed to Vercel (<https://aceap-five.vercel.app>) on Neon Postgres 18:
+  migrations, content and demo seed applied; see docs/DEPLOYMENT.md.
 - `npm run content:validate` — 3 courses OK (166 questions run through the grader).
 - `npm run build:e2e` (production build) — succeeded; all routes compiled.
 - Manual browser pass (dev server, dark theme): landing, demo sign-in, student

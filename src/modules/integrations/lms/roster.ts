@@ -215,7 +215,7 @@ export async function reviewCanvasRoster(user: StaffUser, classId: string, deps:
   if (sources.length === 0) {
     throw new DomainError("conflict", "This class isn't linked to a Canvas course with a roster yet. It is linked the first time you open an AceAP assignment from that Canvas course as the teacher.");
   }
-  const limit = rateLimit(`roster-review:${user.id}`, REVIEW_LIMIT.count, REVIEW_LIMIT.windowMs);
+  const limit = await rateLimit(`roster-review:${user.id}`, REVIEW_LIMIT.count, REVIEW_LIMIT.windowMs);
   if (!limit.allowed) throw new DomainError("rate_limited", "Too many roster reviews. Please wait a few minutes and try again.");
 
   const now = deps.now ?? systemClock;

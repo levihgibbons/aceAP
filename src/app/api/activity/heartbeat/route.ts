@@ -20,7 +20,7 @@ const bodySchema = z.object({
  */
 export const POST = apiHandler(async (req) => {
   const user = await requireApiUser("student");
-  if (!rateLimit(`activity-heartbeat:${user.id}`, 40, 60_000).allowed) throw new DomainError("rate_limited", "Too many heartbeats.");
+  if (!(await rateLimit(`activity-heartbeat:${user.id}`, 40, 60_000)).allowed) throw new DomainError("rate_limited", "Too many heartbeats.");
   const body = await parseJson(req, bodySchema);
   const accepted = await recordHeartbeat(user.id, body);
   return { ok: true, accepted };

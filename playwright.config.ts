@@ -44,6 +44,8 @@ export default defineConfig({
       NEXT_DIST_DIR: DIST_DIR,
       ACEAP_INSECURE_COOKIES: "1",
       ACEAP_DEMO_LOGIN: "1",
+      // The suite signs in as the demo admin; production builds hide that button otherwise.
+      ACEAP_DEMO_ADMIN_LOGIN: "1",
       DATABASE_URL: "",
       AI_PROVIDER: "none",
       // Dev email outbox in this production build, so e2e/account.spec.ts can

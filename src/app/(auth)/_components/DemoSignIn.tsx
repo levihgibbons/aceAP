@@ -52,8 +52,9 @@ function AccountForm({ account, featured, action }: { account: DemoAccount; feat
   );
 }
 
-export function DemoSignIn() {
+export function DemoSignIn({ includeAdmin = true }: { includeAdmin?: boolean }) {
   const [state, action] = useActionState(demoSignIn, initial);
+  const featured = includeAdmin ? FEATURED_DEMO_ACCOUNTS : FEATURED_DEMO_ACCOUNTS.filter((a) => a.role !== "Platform admin");
   return (
     <section aria-labelledby="demo-heading" className="rounded-card border border-line bg-surface-2 p-4 sm:p-5">
       <div className="mb-3">
@@ -61,7 +62,7 @@ export function DemoSignIn() {
           Try the demo
         </h2>
         <p className="mt-1 text-[0.8125rem] text-muted">
-          Sign in as a fictional student, teacher or admin. No real people or data.
+          {includeAdmin ? "Sign in as a fictional student, teacher or admin. No real people or data." : "Sign in as a fictional student or teacher. No real people or data."}
         </p>
       </div>
       {state.error ? (
@@ -71,7 +72,7 @@ export function DemoSignIn() {
         </div>
       ) : null}
       <ul className="space-y-2">
-        {FEATURED_DEMO_ACCOUNTS.map((a) => (
+        {featured.map((a) => (
           <li key={a.email}>
             <AccountForm account={a} featured action={action} />
           </li>

@@ -538,8 +538,14 @@ async function main() {
   const [lakeview] = await db.insert(t.organizations).values({ name: "Lakeview Academy (demo)", slug: "lakeview-demo" }).returning();
   const orgOf = { northfield, lakeview };
   const u: Record<string, SessionUser> = {};
+  // On a public deployment the platform admin must not use the published demo
+  // password: SEED_ADMIN_PASSWORD gives it a private password and makes it a
+  // regular (non-demo) account, so one-click demo sign-in refuses it too.
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD?.trim();
+  if (adminPassword !== undefined && adminPassword !== "" && adminPassword.length < 12) throw new Error("SEED_ADMIN_PASSWORD must be at least 12 characters.");
   for (const a of DEMO_ACCOUNTS) {
-    u[a.key] = await createUser({ name: a.name, email: a.email, password: DEMO_PASSWORD, role: a.role, isDemo: true });
+    const privateAdmin = a.role === "platform_admin" && Boolean(adminPassword);
+    u[a.key] = await createUser({ name: a.name, email: a.email, password: privateAdmin ? adminPassword! : DEMO_PASSWORD, role: a.role, isDemo: !privateAdmin });
     if (a.org) await db.insert(t.organizationMemberships).values({ organizationId: orgOf[a.org].id, userId: u[a.key].id, role: a.role === "teacher" ? "teacher" : "student" });
   }
 
@@ -870,7 +876,8 @@ async function printSummary(db: Db, ctx: { u: Record<string, SessionUser>; class
   log(`  misconceptions: ${miscRows.map((r) => `${r.status} ${r.n}`).join(", ") || "none"}`);
   log(`  learning sessions ${await count(t.learningSessions)} (${ctx.sim.counts.heartbeats} heartbeats) · submissions ${await count(t.submissions)}`);
   log(`  seeded in ${(ctx.elapsedMs / 1000).toFixed(1)} s`);
-  log(`\nDemo password for every account above: ${DEMO_PASSWORD}`);
+  const adminNote = process.env.SEED_ADMIN_PASSWORD?.trim() ? " (except the platform admin, which uses SEED_ADMIN_PASSWORD)" : "";
+  log(`\nDemo password for every account above: ${DEMO_PASSWORD}${adminNote}`);
 }
 
 // Run only when executed directly (`tsx scripts/seed.ts`), not when imported for its helpers.

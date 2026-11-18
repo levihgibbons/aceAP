@@ -15,6 +15,7 @@ import * as t from "@/db/schema";
 import { DomainError } from "@/lib/errors";
 import { authenticate, createUser, signInSchema, signUpSchema } from "@/modules/auth/service";
 import { endSession, homeFor, startSession } from "@/modules/auth/session";
+import { demoAdminLoginAllowed } from "./_components/demo-policy";
 
 export interface AuthFormState {
   error?: string;
@@ -127,6 +128,7 @@ export async function demoSignIn(_prev: AuthFormState, formData: FormData): Prom
     if (!user) return { error: "Demo data isn't loaded yet — run `npm run db:seed`." };
     // Only seeded fictional accounts can be entered without a password.
     if (!user.isDemo) return { error: "That isn't a demo account. Sign in with a password instead." };
+    if (user.role === "platform_admin" && !demoAdminLoginAllowed()) return { error: "The demo admin account can't be entered with one click on this server." };
     await startSession(user.id);
     destination = homeFor(user.role);
   } catch (err) {

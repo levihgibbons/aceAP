@@ -15,7 +15,7 @@ const bodySchema = z.object({
 /** POST /api/activity/session → { sessionId }. Opens a learning session for active-time heartbeats. */
 export const POST = apiHandler(async (req) => {
   const user = await requireApiUser("student");
-  if (!rateLimit(`activity-session:${user.id}`, 30, 60_000).allowed) throw new DomainError("rate_limited", "Too many sessions started. Please wait a moment.");
+  if (!(await rateLimit(`activity-session:${user.id}`, 30, 60_000)).allowed) throw new DomainError("rate_limited", "Too many sessions started. Please wait a moment.");
   const body = await parseJson(req, bodySchema);
   // Only attribute time to a course that exists (aggregates feed teacher dashboards).
   const courseId = body.courseId && (await getCourseTree(body.courseId)) ? body.courseId : null;

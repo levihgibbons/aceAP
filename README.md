@@ -9,7 +9,8 @@ mastery record** that students and teachers share.
 > chain rule; AP Microeconomics — firm costs and profit maximisation; AP
 > Physics 1 — 1-D kinematics) and all 43 AP courses in the catalog with honest
 > content status. See [docs/ROADMAP.md](docs/ROADMAP.md) for exactly what is
-> implemented, tested, and still open.
+> implemented, tested, and still open. Public demo (fictional data only):
+> <https://aceap-five.vercel.app> — hosting notes in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Quick start
 
@@ -125,6 +126,7 @@ PostgreSQL row-level security. Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE
 | [VAULT](docs/VAULT.md) | Knowledge graph, sharing, export format |
 | [CANVAS_INTEGRATION](docs/CANVAS_INTEGRATION.md) | LTI 1.3 design and setup |
 | [SECURITY](docs/SECURITY.md) | Controls, privacy, open compliance work |
+| [DEPLOYMENT](docs/DEPLOYMENT.md) | Vercel + Neon hosting, env vars, cron jobs, the live demo |
 | [ROADMAP](docs/ROADMAP.md) | Phase status and acceptance demonstrations |
 | [DECISIONS](docs/DECISIONS.md) | Architecture decision record |
 

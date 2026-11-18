@@ -174,6 +174,16 @@ Tested in `tests/authorization.test.ts` (database-level assertions), plus
   supported).
 - CSV exports neutralise spreadsheet formula injection.
 - Rate limits: sign-in, class joining, tutor, heartbeats/simulation events.
+  With a database server (DATABASE_URL) they are stored in `rate_limit_buckets`
+  (one atomic upsert per check), so they hold across every serverless instance;
+  the embedded single-process database uses an in-memory store. LTI id_token
+  nonces are likewise shared in `lti_nonces`. Both tables are service-only (RLS
+  on, no grants to the restricted role).
+- Scheduled jobs (`/api/cron/retention` daily, `/api/cron/lms-sync`) require
+  `Authorization: Bearer $CRON_SECRET` (constant-time compare) and are closed
+  when CRON_SECRET is unset. On the public demo the platform-admin account has
+  a private password and cannot be entered with one-click demo sign-in in
+  production builds (see [DEPLOYMENT.md](DEPLOYMENT.md)).
 - Secrets are read only in server modules; a static test asserts no client
   component references `ANTHROPIC_API_KEY`, `LTI_TOOL_PRIVATE_KEY`,
   `DATABASE_URL` or the database client.
@@ -213,10 +223,8 @@ Tested in `tests/authorization.test.ts` (database-level assertions), plus
 - A real email provider adapter (password reset works end to end only with the
   development outbox today), and optional school SSO (OIDC/SAML) or Supabase
   Auth.
-- Scheduling `npm run retention -- --apply` on the hosting platform, audit-log
-  retention (not enforced), school-initiated deletion requests and a
+- Audit-log retention (not enforced), school-initiated deletion requests and a
   class-transfer tool for departing teachers; email-address change.
-- Shared (multi-instance) rate-limit and LTI nonce stores.
 - A CSP violation-report endpoint (`report-to`) with monitoring; confirming the
   LTI framing policy against a real Canvas instance.
 - Parent/guardian consent flows and age gating for users under 13 (COPPA), if

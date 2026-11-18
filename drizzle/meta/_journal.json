@@ -43,6 +43,34 @@
       "when": 1794993746164,
       "tag": "0005_lms_roster_proposals_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795013811096,
+      "tag": "0006_rate_limit_buckets",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795013811906,
+      "tag": "0007_rate_limit_buckets_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795016434777,
+      "tag": "0008_lti_nonces",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795016435576,
+      "tag": "0009_lti_nonces_rls",
+      "breakpoints": true
     }
   ]
 }

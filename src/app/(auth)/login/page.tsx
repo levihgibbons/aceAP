@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Divider } from "@/components/ui";
 import { getCurrentUser, homeFor } from "@/modules/auth/session";
 import { DemoSignIn } from "../_components/DemoSignIn";
+import { demoAdminLoginAllowed } from "../_components/demo-policy";
 import { LoginForm } from "../_components/LoginForm";
 
 export const metadata: Metadata = { title: "Sign in" };
@@ -49,7 +50,7 @@ export default async function LoginPage({
         <>
           <Divider label="or explore with demo data" className="my-8" />
           <div id="demo">
-            <DemoSignIn />
+            <DemoSignIn includeAdmin={demoAdminLoginAllowed()} />
           </div>
         </>
       ) : null}

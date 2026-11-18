@@ -95,7 +95,7 @@ export async function requestAccountDeletion(
   if ((input.confirmation ?? "").trim() !== DELETE_CONFIRMATION_WORD)
     throw new AccountFieldError("confirmation", `Type ${DELETE_CONFIRMATION_WORD} in capital letters to confirm.`);
 
-  const limit = rateLimit(`account-delete:${user.id}`, DELETION_LIMIT.limit, DELETION_LIMIT.windowMs, now.getTime());
+  const limit = await rateLimit(`account-delete:${user.id}`, DELETION_LIMIT.limit, DELETION_LIMIT.windowMs, now.getTime());
   if (!limit.allowed) throw new DomainError("rate_limited", "Too many attempts. Please wait a few minutes and try again.");
 
   const db = await getDb();

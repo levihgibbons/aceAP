@@ -26,9 +26,9 @@ const PER_SIM_WINDOW_MS = 30_000;
  */
 export const POST = apiHandler(async (req) => {
   const user = await requireApiUser("student");
-  if (!rateLimit(`activity-sim:${user.id}`, 20, 60_000).allowed) throw new DomainError("rate_limited", "Too many simulation events.");
+  if (!(await rateLimit(`activity-sim:${user.id}`, 20, 60_000)).allowed) throw new DomainError("rate_limited", "Too many simulation events.");
   const body = await parseJson(req, bodySchema);
-  if (!rateLimit(`activity-sim:${user.id}:${body.simId}:${body.lessonId ?? body.questionId ?? ""}`, 1, PER_SIM_WINDOW_MS).allowed) return { recorded: false };
+  if (!(await rateLimit(`activity-sim:${user.id}:${body.simId}:${body.lessonId ?? body.questionId ?? ""}`, 1, PER_SIM_WINDOW_MS)).allowed) return { recorded: false };
 
   const db = await getDb();
   let courseId: string | null = null;

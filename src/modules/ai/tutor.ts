@@ -374,7 +374,7 @@ async function checkRateLimits(db: Db, userId: string, now: Date): Promise<numbe
     const freesAt = recent[recent.length - maxMessagesPerHour].createdAt.getTime() + HOUR_MS;
     return Math.max(1, Math.ceil((freesAt - now.getTime()) / 1000));
   }
-  const burst = rateLimit(`tutor-burst:${userId}`, BURST_LIMIT, BURST_WINDOW_MS, now.getTime());
+  const burst = await rateLimit(`tutor-burst:${userId}`, BURST_LIMIT, BURST_WINDOW_MS, now.getTime());
   return burst.allowed ? null : burst.retryAfterSeconds;
 }
 

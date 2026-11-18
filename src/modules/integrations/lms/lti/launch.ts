@@ -91,8 +91,41 @@ export class InMemoryNonceStore implements NonceStore {
   }
 }
 
-/** Shared by all launches handled in this process. */
-export const defaultNonceStore: NonceStore = new InMemoryNonceStore();
+/**
+ * Nonce store in PostgreSQL (`lti_nonces`): one atomic upsert per launch, so a
+ * replay is refused whichever serverless instance receives it. An expired row
+ * may be taken over by the same nonce again (it can no longer be replayed:
+ * the id_token itself has expired by then).
+ */
+export class DatabaseNonceStore implements NonceStore {
+  constructor(private readonly now: Clock = systemClock) {}
+
+  async consume(nonce: string, expiresAt: Date): Promise<boolean> {
+    const { getDb } = await import("@/db/client");
+    const { sql } = await import("drizzle-orm");
+    const db = await getDb();
+    const nowIso = this.now().toISOString();
+    const result = (await db.execute(sql`
+      insert into lti_nonces (nonce, expires_at) values (${nonce}, ${expiresAt.toISOString()}::timestamptz)
+      on conflict (nonce) do update set expires_at = excluded.expires_at
+        where lti_nonces.expires_at <= ${nowIso}::timestamptz
+      returning nonce`)) as unknown as { rows: unknown[] };
+    if (Math.random() < 0.02) await db.execute(sql`delete from lti_nonces where expires_at <= ${nowIso}::timestamptz`).catch(() => {});
+    return result.rows.length === 1;
+  }
+}
+
+const memoryNonceStore = new InMemoryNonceStore();
+const databaseNonceStore = new DatabaseNonceStore();
+
+/**
+ * Default for all launches: the shared database store whenever a database
+ * server is configured (DATABASE_URL — staging/production, many instances),
+ * the process-local store for the embedded single-process database.
+ */
+export const defaultNonceStore: NonceStore = {
+  consume: (nonce, expiresAt) => (process.env.DATABASE_URL?.trim() ? databaseNonceStore : memoryNonceStore).consume(nonce, expiresAt),
+};
 
 // ─────────────────────────────── Platform keys ──────────────────────────────
 

@@ -39,7 +39,16 @@ async function open(): Promise<Handle> {
     const { Pool } = await import("pg");
     const { drizzle } = await import("drizzle-orm/node-postgres");
     const { migrate } = await import("drizzle-orm/node-postgres/migrator");
-    const pool = new Pool({ connectionString: url, max: 10 });
+    // Serverless (Vercel) runs many short-lived instances: keep each one's pool
+    // small and release idle connections quickly, and point DATABASE_URL at the
+    // provider's pooled endpoint (e.g. Neon's "-pooler" host). Transaction-mode
+    // pooling is safe here: every per-request setting (SET LOCAL ROLE,
+    // set_config(..., true)) is transaction-scoped and no named prepared
+    // statements are used.
+    const serverless = Boolean(process.env.VERCEL);
+    const max = positiveInt(process.env.DATABASE_POOL_MAX) ?? (serverless ? 3 : 10);
+    const pool = new Pool({ connectionString: url, max, idleTimeoutMillis: serverless ? 5_000 : 30_000, connectionTimeoutMillis: 10_000 });
+    pool.on("error", (err) => console.error("[db] idle client error", err.message));
     const db = drizzle(pool, { schema });
     return {
       db: db as unknown as Db,
@@ -49,6 +58,11 @@ async function open(): Promise<Handle> {
     };
   }
 
+  if (process.env.VERCEL) {
+    // The embedded database writes to local disk, which serverless functions
+    // don't have (and every instance would get its own empty database).
+    throw new Error("DATABASE_URL is not set. On Vercel AceAP needs a hosted PostgreSQL database (e.g. Neon); see docs/DEPLOYMENT.md.");
+  }
   const { PGlite } = await import("@electric-sql/pglite");
   const { drizzle } = await import("drizzle-orm/pglite");
   const { migrate } = await import("drizzle-orm/pglite/migrator");
@@ -126,3 +140,8 @@ export async function asUser<T>(actor: Actor, fn: (tx: Db) => Promise<T>): Promi
 }
 
 export { schema };
+
+function positiveInt(value: string | undefined): number | undefined {
+  const n = Number(value);
+  return Number.isInteger(n) && n > 0 ? n : undefined;
+}

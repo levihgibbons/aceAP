@@ -68,8 +68,8 @@ export async function createUser(input: CreateUserInput): Promise<SessionUser> {
 /** Verify credentials. Attempts are rate limited per email and per client address. */
 export async function authenticate(input: z.infer<typeof signInSchema>, clientKey: string): Promise<SessionUser> {
   const email = input.email.toLowerCase();
-  const byEmail = rateLimit(`login:email:${email}`, 8, 10 * 60_000);
-  const byClient = rateLimit(`login:client:${clientKey}`, 40, 10 * 60_000);
+  const byEmail = await rateLimit(`login:email:${email}`, 8, 10 * 60_000);
+  const byClient = await rateLimit(`login:client:${clientKey}`, 40, 10 * 60_000);
   if (!byEmail.allowed || !byClient.allowed) {
     const wait = Math.ceil(Math.max(byEmail.retryAfterSeconds, byClient.retryAfterSeconds) / 60);
     throw new DomainError("rate_limited", `Too many sign-in attempts. Try again in about ${wait} minute${wait === 1 ? "" : "s"}.`);
