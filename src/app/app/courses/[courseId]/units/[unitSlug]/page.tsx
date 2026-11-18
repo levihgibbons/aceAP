@@ -12,7 +12,7 @@ import {
   pluralize,
 } from "@/components/ui";
 import { CompletionMeter, MasteryOverview, MiniLabel } from "@/components/student/Bits";
-import { CheckpointStep, LessonStep } from "@/components/student/CourseRoadmap";
+import { UnitPathList } from "@/components/student/CourseRoadmap";
 import { NEXT_STEP_ACTION, unitLessons } from "@/components/student/roadmap";
 import { requireStudent } from "@/modules/auth/session";
 import { getCourseTree } from "@/modules/curriculum/queries";
@@ -115,22 +115,11 @@ export default async function UnitPage({ params }: Params) {
         <div className="min-w-0">
           <section aria-labelledby="lessons-title">
             <h2 id="lessons-title" className="font-display text-xl font-semibold tracking-[-0.01em] text-ink">
-              Lessons and checks
+              Learn and practise
             </h2>
-            <p className="mt-1 text-sm text-muted">In the recommended order. You can open any of them at any time.</p>
+            <p className="mt-1 text-sm text-muted">Each topic&apos;s lessons, then exercises to apply them, then quizzes. Open anything at any time.</p>
             <Card padded={false} className="mt-4 overflow-hidden">
-              <ol className="divide-y divide-line">
-                {path.map((l, i) => (
-                  <li key={l.id}>
-                    <LessonStep lesson={l} number={`${unit.number}.${i + 1}`} o={o} isNext={nextLesson?.id === l.id} />
-                  </li>
-                ))}
-                {unit.assessments.map((a) => (
-                  <li key={a.id}>
-                    <CheckpointStep assessment={a} o={o} />
-                  </li>
-                ))}
-              </ol>
+              <UnitPathList unit={unit} o={o} nextLessonId={nextLesson?.id ?? null} />
             </Card>
           </section>
 

@@ -49,6 +49,7 @@ const NAV: Record<
 const EXTRA: Partial<Record<AccountKey, string[]>> = {
   alex: [
     "/app/search?q=chain+rule",
+    "/app/vault/notes",
     "/app/vault/graph",
     "/app/vault/export",
     "/app/courses/calculus-ab",

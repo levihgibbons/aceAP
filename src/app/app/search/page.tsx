@@ -60,7 +60,7 @@ const GROUP_LABEL: Record<SearchGroup, string> = {
 
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) ?? "";
 
-/** The search index links notes to /app/vault?note=…; the vault's note route is /app/vault/notes/<id>. */
+/** The search index links notes to the notes workspace (/app/vault/notes?note=…); results open the note itself. */
 const hrefFor = (r: SearchResult) =>
   r.group === "notes" ? `/app/vault/notes/${encodeURIComponent(r.id)}` : r.href;
 

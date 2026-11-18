@@ -9,7 +9,7 @@ import { PageHeader, Pill, TabLinks } from "@/components/ui";
 import { classHref } from "./format";
 import { CopyButton } from "./CopyButton";
 
-export type ClassSection = "overview" | "mastery" | "interventions" | "engagement" | "assignments" | "gradebook" | "notes" | "settings" | "canvas";
+export type ClassSection = "overview" | "mastery" | "practice" | "interventions" | "engagement" | "assignments" | "gradebook" | "notes" | "settings" | "canvas";
 
 export interface ClassHeaderInfo {
   id: string;
@@ -36,6 +36,7 @@ export function ClassHeader({
   const sectionLabel: Record<ClassSection, string> = {
     overview: "Roster",
     mastery: "Mastery",
+    practice: "Lessons & practice",
     interventions: "Interventions",
     engagement: "Engagement",
     assignments: "Assignments",
@@ -72,6 +73,7 @@ export function ClassHeader({
         items={[
           { id: "overview", label: "Roster", href: classHref(ctx.id) },
           { id: "mastery", label: "Mastery", href: classHref(ctx.id, "mastery") },
+          { id: "practice", label: "Lessons & practice", href: classHref(ctx.id, "practice") },
           { id: "interventions", label: "Interventions", href: classHref(ctx.id, "interventions") },
           { id: "engagement", label: "Engagement", href: classHref(ctx.id, "engagement") },
           { id: "assignments", label: "Assignments", href: `/teacher/assignments?class=${ctx.id}` },

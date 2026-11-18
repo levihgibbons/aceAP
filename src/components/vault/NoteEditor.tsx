@@ -638,7 +638,7 @@ export function NoteEditor({ initial, folders, knownTags }: NoteEditorProps) {
         description: `“${latest.current.title}” was deleted.`,
         tone: "neutral",
       });
-      router.push("/app/vault");
+      router.push("/app/vault/notes");
     } catch (e) {
       setDeleting(false);
       setConfirmDelete(false);
@@ -700,11 +700,11 @@ export function NoteEditor({ initial, folders, knownTags }: NoteEditorProps) {
             </Button>
           ) : null}
           <Link
-            href={noteId ? `/app/vault?note=${noteId}` : "/app/vault"}
+            href={noteId ? `/app/vault/notes?note=${noteId}` : "/app/vault/notes"}
             className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-[0.8125rem] font-medium text-ink-2 hover:bg-sunken hover:text-ink"
           >
             <BookOpen aria-hidden="true" className="size-4" />
-            {noteId ? "Open in vault" : "Back to vault"}
+            {noteId ? "Open in notes" : "Back to notes"}
           </Link>
         </div>
       </div>

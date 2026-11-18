@@ -28,6 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 function modeFor(kind: string): AttemptMode {
+  if (kind === "exercise") return "guided_practice";
   return (["lesson_quiz", "skill_quiz", "unit_test", "course_review", "exam_practice"] as const).find((k) => k === kind) ?? "custom";
 }
 
@@ -145,6 +146,8 @@ export default async function AssessmentStartPage({ params, searchParams }: Prop
   const feedback = row.config.feedback ?? "after_submit";
   const assistance = row.config.assistance === "allowed" ? "allowed" : "disabled";
   const questionCount = node?.questionCount ?? null;
+  const perTry = row.kind === "exercise" ? (row.config.questionsPerAttempt ?? null) : null;
+  const questionsValue = perTry && questionCount && questionCount > perTry ? `${perTry} per try (new each time, from a pool of ${questionCount})` : (questionCount ?? "—");
 
   return (
     <>
@@ -154,14 +157,14 @@ export default async function AssessmentStartPage({ params, searchParams }: Prop
           { label: tree.course.name, href: `/app/courses/${tree.course.id}` },
           { label: row.title },
         ]}
-        eyebrow={`${MODE_LABEL[mode]}${unit ? ` · Unit ${unit.number}` : ""}`}
+        eyebrow={`${row.kind === "exercise" ? "Practice exercise" : MODE_LABEL[mode]}${unit ? ` · Unit ${unit.number}` : ""}`}
         title={row.title}
         description={row.description || undefined}
       />
       <IntroCard
         title={row.title}
         facts={[
-          { label: "Questions", value: questionCount ?? "—" },
+          { label: "Questions", value: questionsValue },
           { label: "Timing", value: minutes ? `${minutes} min` : "Untimed" },
           { label: "Feedback", value: feedback === "immediate" ? "After each answer" : "After you submit" },
           { label: "Help", value: assistance === "allowed" ? "Hints and AI tutor" : "No hints or AI tutor" },

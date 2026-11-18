@@ -5,13 +5,12 @@
  */
 import type { CourseTree, LessonNode, UnitNode } from "@/modules/curriculum/queries";
 import type { CourseOverview } from "@/modules/learning/overview";
+import { unitLessons } from "@/modules/curriculum/path";
+
+export { unitLessons, unitPath, type PathItem, type PathSection } from "@/modules/curriculum/path";
 
 type ProgressLike = Pick<CourseOverview, "lessonProgress">;
 
-/** Lessons of one unit in guided-path order. */
-export function unitLessons(tree: CourseTree, unitId: string): LessonNode[] {
-  return tree.lessonOrder.map((id) => tree.lessons.get(id)!).filter((l) => l && l.unitId === unitId);
-}
 
 /** "3.2" for the second lesson of unit 3. */
 export function lessonNumber(tree: CourseTree, lessonId: string): string | null {
@@ -59,3 +58,4 @@ export const NEXT_STEP_EYEBROW: Record<NextStep["mode"], string> = {
   next: "Up next",
   done: "Every lesson finished",
 };
+

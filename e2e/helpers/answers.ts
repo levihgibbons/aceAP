@@ -5,7 +5,7 @@
  * `.data/e2e`, so the tests can't read answer keys from the database. These
  * are copied from the authored content (verified by `npm run content:validate`):
  *   content/courses/calculus-ab.questions.ts
- *   content/courses/physics-1.questions.ts
+ *   content/courses/physics-1/unit-1.questions.ts
  * Each entry also has a `marker`: a substring of the question's KaTeX source
  * (KaTeX keeps the TeX in a MathML <annotation>), used to recognise the
  * question when an attempt shuffles its order.

@@ -247,10 +247,18 @@ export const assessmentConfigSchema = z.object({
   feedback: z.enum(["immediate", "after_submit"]).default("after_submit"),
   /** Whether hints and the AI tutor are available while the attempt is open. */
   assistance: z.enum(["allowed", "disabled"]).default("disabled"),
+  /**
+   * Exercises only: questions served per attempt, drawn from the assessment's
+   * question pool (unseen and previously missed questions first, varied
+   * patterns). Omitted = every listed question, in order.
+   */
+  questionsPerAttempt: z.number().int().positive().optional(),
 });
 export type AssessmentConfig = z.infer<typeof assessmentConfigSchema>;
 
 export const ASSESSMENT_KINDS = [
+  /** Topic practice set placed on the roadmap after its lessons: a fresh draw from a pool each attempt, immediate feedback, hints allowed; recorded as guided practice. */
+  "exercise",
   "lesson_quiz",
   "skill_quiz",
   "unit_test",

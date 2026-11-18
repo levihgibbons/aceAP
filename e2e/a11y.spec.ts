@@ -192,10 +192,17 @@ test.describe("axe scans", () => {
       expect(res.ok()).toBe(true);
     }
 
+    // Finishing a lesson fills "My knowledge" (the vault home) with its ideas and formulas.
+    const done = await page.request.post("/api/lessons/calculus-ab.l.chain-rule/complete");
+    expect(done.ok()).toBe(true);
     await page.goto("/app/vault");
     await h1(page);
+    await expect(page.getByRole("heading", { level: 2, name: /^Unit \d+:/ }).first()).toBeVisible();
     await inThemes(page, ["light", "dark"], async () => {
       await page.goto("/app/vault");
+      await h1(page);
+      await audit.scan(page, "vault: my knowledge");
+      await page.goto("/app/vault/notes");
       await h1(page);
       await audit.scan(page, "vault workspace");
     });

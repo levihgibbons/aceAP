@@ -57,7 +57,7 @@ export function RecentChanges({ notes, currentId }: { notes: RecentNote[]; curre
           {notes.map((n) => (
             <li key={n.id} className="flex items-baseline justify-between gap-3 text-sm">
               <Link
-                href={`/app/vault?note=${n.id}`}
+                href={`/app/vault/notes?note=${n.id}`}
                 aria-current={n.id === currentId ? "true" : undefined}
                 className="min-w-0 truncate text-ink-2 hover:text-ink hover:underline underline-offset-4 aria-[current=true]:font-semibold aria-[current=true]:text-ink"
               >
@@ -126,7 +126,7 @@ export function NoteConnections({
             {backlinks.map((b) => (
               <li key={b.noteId}>
                 <Link
-                  href={`/app/vault?note=${b.noteId}`}
+                  href={`/app/vault/notes?note=${b.noteId}`}
                   className="inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:underline underline-offset-4"
                 >
                   <FileText aria-hidden="true" className="size-3.5 text-muted" />
@@ -149,7 +149,7 @@ export function NoteConnections({
             {noteLinks.map((l) => (
               <li key={`n-${l.targetId}`}>
                 <Link
-                  href={`/app/vault?note=${l.targetId}`}
+                  href={`/app/vault/notes?note=${l.targetId}`}
                   className="inline-flex items-center gap-1.5 text-ink hover:underline underline-offset-4"
                 >
                   <ArrowUpRight aria-hidden="true" className="size-3.5 text-muted" />

@@ -5,14 +5,14 @@
  * unit is a single muted row. Nothing is collapsed and nothing is locked.
  */
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, CircleDashed, CircleDot, ClipboardCheck, Lock } from "lucide-react";
+import { ArrowRight, CheckCircle2, CircleDashed, CircleDot, ClipboardCheck, Dumbbell, Lock } from "lucide-react";
 import { Badge, StatusBadge, pluralize } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import type { AssessmentNode, LessonNode, UnitNode } from "@/modules/curriculum/queries";
 import type { CourseOverview } from "@/modules/learning/overview";
 import { ASSESSMENT_KIND_LABEL, scoreText } from "./format";
 import { lessonStatusFor } from "./status";
-import { unitLessons } from "./roadmap";
+import { unitLessons, unitPath } from "./roadmap";
 
 export function CourseRoadmap({ o, nextLessonId }: { o: CourseOverview; nextLessonId: string | null }) {
   const { tree } = o;
@@ -77,18 +77,7 @@ function UnitStage({ unit, o, nextLessonId }: { unit: UnitNode; o: CourseOvervie
           <ArrowRight aria-hidden="true" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </header>
-      <ol className="divide-y divide-line">
-        {lessons.map((l, i) => (
-          <li key={l.id}>
-            <LessonStep lesson={l} number={`${unit.number}.${i + 1}`} o={o} isNext={l.id === nextLessonId} />
-          </li>
-        ))}
-        {unit.assessments.map((a) => (
-          <li key={a.id}>
-            <CheckpointStep assessment={a} o={o} />
-          </li>
-        ))}
-      </ol>
+      <UnitPathList unit={unit} o={o} nextLessonId={nextLessonId} />
     </section>
   );
 }
@@ -122,7 +111,7 @@ export function LessonStep({
           progress === "completed" ? "text-good" : progress === "in_progress" ? "text-accent" : "text-faint",
         )}
       />
-      <span aria-hidden="true" className="w-9 shrink-0 font-mono text-xs text-muted tabular-nums">
+      <span aria-hidden="true" className="w-[4.5rem] shrink-0 font-mono text-xs text-muted tabular-nums">
         {number}
       </span>
       <span className="min-w-0 flex-1">
@@ -140,6 +129,76 @@ export function LessonStep({
   );
 }
 
+/** A unit's path grouped by topic: lessons, then that topic's exercises and quizzes; unit-level checks last. */
+export function UnitPathList({
+  unit,
+  o,
+  nextLessonId,
+}: {
+  unit: UnitNode;
+  o: CourseOverview;
+  nextLessonId: string | null;
+}) {
+  const sections = unitPath(o.tree, unit);
+  return (
+    <div className="divide-y divide-line">
+      {sections.map((section) => (
+        <div key={section.topic?.id ?? "unit-checks"}>
+          <p className="bg-surface-2/70 px-5 py-2 text-[0.6875rem] font-semibold uppercase tracking-[0.07em] text-muted sm:px-6">
+            {section.topic ? section.topic.title : "Unit checks"}
+          </p>
+          <ol className="divide-y divide-line">
+            {section.items.map((item) =>
+              item.type === "lesson" ? (
+                <li key={item.lesson.id}>
+                  <LessonStep lesson={item.lesson} number={item.number} o={o} isNext={item.lesson.id === nextLessonId} />
+                </li>
+              ) : (
+                <li key={item.assessment.id}>
+                  {item.assessment.kind === "exercise" ? (
+                    <ExerciseStep assessment={item.assessment} o={o} />
+                  ) : (
+                    <CheckpointStep assessment={item.assessment} o={o} />
+                  )}
+                </li>
+              ),
+            )}
+          </ol>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** A practice exercise: a fresh set of questions each try; shows best score and the level of its skills. */
+export function ExerciseStep({
+  assessment: a,
+  o,
+}: {
+  assessment: AssessmentNode;
+  o: Pick<CourseOverview, "assessmentResults" | "states" | "lessonProgress">;
+}) {
+  const res = o.assessmentResults.get(a.id);
+  return (
+    <Link href={`/app/assessments/${a.id}`} className="group flex items-center gap-3.5 px-5 py-3.5 transition-colors hover:bg-surface-2 sm:px-6">
+      <Dumbbell aria-hidden="true" className={cn("size-5 shrink-0", res ? "text-accent" : "text-faint")} />
+      <span aria-hidden="true" className="w-[4.5rem] shrink-0 text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-accent">
+        Practice
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[0.9375rem] font-medium text-ink underline-offset-4 group-hover:underline">
+          <span className="sr-only">Practice exercise: </span>
+          {a.title}
+        </span>
+        <span className="mt-0.5 block text-xs text-muted">
+          {res ? `Best ${scoreText(res.bestScore, res.maxScore)} · ${pluralize(res.attempts, "try", "tries")}` : "Not started"} · new questions each try
+        </span>
+      </span>
+      <StatusBadge status={lessonStatusFor({ id: a.id, skillIds: a.skillIds }, o)} size="sm" />
+    </Link>
+  );
+}
+
 export function CheckpointStep({ assessment: a, o }: { assessment: AssessmentNode; o: Pick<CourseOverview, "assessmentResults"> }) {
   const res = o.assessmentResults.get(a.id);
   return (
@@ -148,7 +207,7 @@ export function CheckpointStep({ assessment: a, o }: { assessment: AssessmentNod
       className="group flex items-center gap-3.5 bg-surface-2/50 px-5 py-3.5 transition-colors hover:bg-surface-2 sm:px-6"
     >
       <ClipboardCheck aria-hidden="true" className={cn("size-5 shrink-0", res ? "text-good" : "text-faint")} />
-      <span className="w-9 shrink-0 text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted">Check</span>
+      <span aria-hidden="true" className="w-[4.5rem] shrink-0 text-[0.6875rem] font-semibold uppercase tracking-[0.06em] text-muted">Check</span>
       <span className="min-w-0 flex-1">
         <span className="block text-[0.9375rem] font-medium text-ink underline-offset-4 group-hover:underline">{a.title}</span>
         <span className="mt-0.5 block text-xs text-muted">

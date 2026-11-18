@@ -59,4 +59,13 @@ activity kind, daily trend, lessons completed, last active day — always labell
 "estimated active time (idle periods over N s excluded)". Completion, accuracy,
 mastery and grades are shown as separate measures.
 
+**Lessons & practice** (`/teacher/classes/[id]/practice`, one unit at a time,
+in roadmap order): for every lesson — students who opened/finished it, the
+share of inline checks answered right on the first try, median estimated active
+time; for every exercise, quiz and test — students who tried it, the mean of
+each student's best score, tries, median active time. Each step lists students
+under 60% ("check in with"), the misconceptions their answers showed, and a
+per-student breakdown. Read under row-level security; source:
+`src/modules/classrooms/practiceReport.ts`.
+
 Not built: psychological or behavioural profiling of any kind.

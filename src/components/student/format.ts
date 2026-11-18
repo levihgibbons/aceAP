@@ -21,6 +21,7 @@ export const MODE_LABEL: Record<AttemptMode, string> = {
 };
 
 export const ASSESSMENT_KIND_LABEL: Record<string, string> = {
+  exercise: "Exercise",
   skill_quiz: "Skill quiz",
   lesson_quiz: "Lesson quiz",
   unit_test: "Unit test",

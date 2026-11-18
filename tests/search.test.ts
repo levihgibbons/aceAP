@@ -80,7 +80,9 @@ describe("curriculum ranking", () => {
     const r = await search(alice, "area under velocity time graph");
     expect(r.skills[0].id).toBe("physics-1.vt-graphs");
     expect(r.best[0].courseId).toBe("physics-1");
-    expect(r.lessons[0].id).toBe("physics-1.l.motion-graphs");
+    // Both Unit 1 graph lessons teach the area under a velocity–time graph.
+    expect(r.lessons.slice(0, 2).map((l) => l.id)).toContain("physics-1.l.motion-graphs");
+    expect(r.lessons[0].id).toMatch(/^physics-1\.l\./);
   });
 
   it("matches lesson text, formula captions and LaTeX-derived tokens", async () => {
@@ -143,7 +145,7 @@ describe("privacy", () => {
   it("returns the requester's own notes and never another user's", async () => {
     const a = await search(alice, "photosynthesis");
     expect(a.notes.map((n) => n.id)).toEqual([aliceNoteId]);
-    expect(a.notes[0].href).toBe(`/app/vault?note=${aliceNoteId}`);
+    expect(a.notes[0].href).toBe(`/app/vault/notes?note=${aliceNoteId}`);
     expect(JSON.stringify(a)).not.toContain(bobNoteId);
 
     const quokka = await search(alice, "quokka");

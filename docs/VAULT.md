@@ -1,7 +1,35 @@
 # Knowledge vault
 
-Code: `src/modules/vault/` (service, link parser). UI: `/app/vault`.
-Tests: `tests/vault.test.ts`, `tests/authorization.test.ts`.
+Each student's personal knowledge base. It **builds itself from their
+progress** — nobody has to set it up — and their own notes sit alongside it.
+It is private to the student.
+
+Code: `src/modules/vault/` (`knowledge.ts` for the self-building part,
+`service.ts` for notes, links, graph and export; `links.ts` link parser).
+UI: `/app/vault` (My knowledge), `/app/vault/notes`, `/app/vault/graph`,
+`/app/vault/export`, `/app/vault/concepts/<skillId>`.
+Tests: `tests/vault-knowledge.test.ts`, `tests/vault.test.ts`, `tests/authorization.test.ts`.
+
+## My knowledge (built from progress)
+
+`getKnowledgeBase(actor)` assembles, on every read and for every course the
+student is in, one entry per topic they have reached:
+
+| Part | Comes from | When it appears |
+|---|---|---|
+| Lessons (finished / in progress) | `lesson_progress` | when the lesson is opened |
+| Key ideas, definitions, formulas | the `summary`, `definition` and `formula` blocks of the lesson version they saw | as they reach each block (`furthest_block`); everything once the lesson is finished |
+| Skill levels | `mastery_states` | after their first graded answer |
+| "Watch out" / "Fixed" | `detected_misconceptions` (unresolved / resolved) | when an answer pattern shows it, and when it is resolved |
+| Their notes | `vault_links` from their notes to the topic's skills | when a note links `[[a skill]]` |
+
+Nothing is copied or stored: the page is derived, so it always matches the
+current record, and deleting progress or notes removes it from the vault.
+Student-private rows are read under RLS (`asUser`), so only the caller's own
+progress can appear. Topics and units not reached yet are counted ("still to
+unlock") but not shown. "Recently added" lists the latest lessons, skill
+updates and fixed misconceptions. Old `/app/vault?note=…` links redirect to
+`/app/vault/notes`.
 
 ## Model
 

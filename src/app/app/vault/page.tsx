@@ -1,457 +1,397 @@
 /**
- * /app/vault — the Knowledge Vault workspace: search, tags, folders and the
- * note list; the open note (?note=<id>); and its connections.
- * Filters are URL state (?q=, ?tag=, ?folder=), so they work without JavaScript.
+ * /app/vault — "My knowledge": the student's personal knowledge base, built
+ * automatically from their progress (lessons reached, mastery, misconceptions
+ * found and fixed, notes they linked). Nothing to set up; it fills in as they
+ * learn. Their own notes live under /app/vault/notes.
  */
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { ReactNode } from "react";
-import { FileText, Folder, Lock, Network, PencilLine, Plus, Search, Tag, X } from "lucide-react";
-import { Markdown } from "@/components/content/Markdown";
+import { redirect } from "next/navigation";
 import {
-  Badge,
+  AlertTriangle,
+  BookOpen,
+  CheckCircle2,
+  ChevronDown,
+  CircleDot,
+  FileText,
+  Lightbulb,
+  Lock,
+  Plus,
+  Sigma,
+  Sparkles,
+  Target,
+} from "lucide-react";
+import { InlineMarkdown, Markdown } from "@/components/content/Markdown";
+import {
   ButtonLink,
   EmptyState,
+  MasteryBadge,
   PageHeader,
-  Pill,
-  formatDate,
+  StatTile,
+  TabLinks,
   formatRelativeTime,
+  pluralize,
 } from "@/components/ui";
-import { NoteConnections, RecentChanges } from "@/components/vault/NoteConnections";
-import { ShareButton } from "@/components/vault/ShareDialog";
 import { VaultNav } from "@/components/vault/VaultNav";
-import { VaultWorkspace } from "@/components/vault/VaultWorkspace";
-import { WIKI_PROSE_CLASSES, lookupFromLinks, wikiToMarkdown } from "@/components/vault/wiki";
-import { DomainError } from "@/lib/errors";
+import { newNoteHref } from "@/components/vault/wiki";
 import { cn } from "@/lib/cn";
 import { requireStudent } from "@/modules/auth/session";
-import { getBacklinks, getNote, listNotes, listTags, type NoteView } from "@/modules/vault/service";
-import { getSkillLevels } from "../../api/vault/_lib/queries";
+import { getKnowledgeBase, type KnowledgeBase, type KnowledgeTopic } from "@/modules/vault/knowledge";
 
 export const metadata: Metadata = { title: "Knowledge vault" };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
-export default async function VaultPage({ searchParams }: { searchParams: SearchParams }) {
-  const user = await requireStudent();
+const RECENT_ICON: Record<KnowledgeBase["recent"][number]["kind"], typeof BookOpen> = {
+  lesson_completed: CheckCircle2,
+  lesson_started: BookOpen,
+  skill: Target,
+  fixed: Sparkles,
+};
+
+export default async function KnowledgePage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
-  const q = one(sp.q)?.trim().slice(0, 200) || undefined;
-  const tag = one(sp.tag) || undefined;
-  const folder = one(sp.folder);
-  const noteId = one(sp.note);
-
-  const filtering = Boolean(q || tag || folder !== undefined);
-  const [all, tags] = await Promise.all([listNotes(user, { limit: 200 }), listTags(user)]);
-  const notes = filtering ? await listNotes(user, { query: q, tag, folder, limit: 200 }) : all;
-
-  let note: NoteView | null = null;
-  let missing = false;
-  if (noteId) {
-    try {
-      note = await getNote(user, noteId);
-    } catch (e) {
-      if (e instanceof DomainError && e.code === "not_found") missing = true;
-      else throw e;
-    }
+  // Old note links (/app/vault?note=…, ?q=, ?tag=, ?folder=) now live under Notes.
+  const legacy = new URLSearchParams();
+  for (const k of ["note", "q", "tag", "folder"]) {
+    const v = one(sp[k]);
+    if (v !== undefined) legacy.set(k, v);
   }
-  const [backlinks, skills] = note
-    ? await Promise.all([
-        getBacklinks(user, { type: "note", id: note.id }),
-        getSkillLevels(
-          user,
-          note.links.filter((l) => l.targetType === "skill").map((l) => l.targetId),
-        ),
-      ])
-    : [[], []];
+  if ([...legacy.keys()].length) redirect(`/app/vault/notes?${legacy.toString()}`);
 
-  // Folder list with counts (each folder counts notes in it and below it).
-  const folderCounts = new Map<string, number>();
-  for (const n of all) {
-    if (!n.folder) continue;
-    const parts = n.folder.split("/");
-    for (let i = 1; i <= parts.length; i++) {
-      const path = parts.slice(0, i).join("/");
-      folderCounts.set(path, (folderCounts.get(path) ?? 0) + 1);
-    }
-  }
-  const folders = [...folderCounts].sort((a, b) => a[0].localeCompare(b[0]));
-
-  const href = (patch: Record<string, string | undefined>) => {
-    const p = new URLSearchParams();
-    const base = { q, tag, folder, note: note?.id, ...patch };
-    for (const [k, v] of Object.entries(base)) if (v !== undefined) p.set(k, v);
-    const s = p.toString();
-    return s ? `/app/vault?${s}` : "/app/vault";
-  };
-
-  const sidebar = (
-    <div className="space-y-5">
-      <form action="/app/vault" method="get" role="search" className="relative">
-        <label htmlFor="vault-search" className="sr-only">
-          Search notes
-        </label>
-        <Search
-          aria-hidden="true"
-          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-faint"
-        />
-        <input
-          id="vault-search"
-          name="q"
-          type="search"
-          defaultValue={q}
-          placeholder="Search titles and text"
-          className="h-10 w-full rounded-lg border border-line-strong bg-surface pl-9 pr-3 text-sm text-ink shadow-card placeholder:text-faint focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent"
-        />
-        {tag ? <input type="hidden" name="tag" value={tag} /> : null}
-        {folder !== undefined ? <input type="hidden" name="folder" value={folder} /> : null}
-        {note ? <input type="hidden" name="note" value={note.id} /> : null}
-      </form>
-
-      {filtering ? (
-        <div className="flex flex-wrap items-center gap-1.5" aria-label="Active filters">
-          {q ? <FilterChip label={`“${q}”`} href={href({ q: undefined })} what="search" /> : null}
-          {tag ? (
-            <FilterChip label={`#${tag}`} href={href({ tag: undefined })} what="tag filter" />
-          ) : null}
-          {folder !== undefined ? (
-            <FilterChip
-              label={folder || "No folder"}
-              href={href({ folder: undefined })}
-              what="folder filter"
-            />
-          ) : null}
-        </div>
-      ) : null}
-
-      {folders.length ? (
-        <div>
-          <h2 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
-            Folders
-          </h2>
-          <ul className="space-y-0.5 text-sm">
-            <li>
-              <SideLink
-                href={href({ folder: undefined })}
-                active={folder === undefined}
-                icon={<FileText className="size-3.5" />}
-                label="All notes"
-                count={all.length}
-              />
-            </li>
-            {folders.map(([path, count]) => {
-              const depth = path.split("/").length - 1;
-              return (
-                <li key={path} style={{ paddingLeft: `${depth * 0.75}rem` }}>
-                  <SideLink
-                    href={href({ folder: path })}
-                    active={folder === path}
-                    icon={<Folder className="size-3.5" />}
-                    label={path.split("/").pop() ?? path}
-                    count={count}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ) : null}
-
-      {tags.length ? (
-        <div>
-          <h2 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">Tags</h2>
-          <ul className="flex flex-wrap gap-1.5">
-            {tags.slice(0, 30).map((t) => (
-              <li key={t.tag}>
-                <Link
-                  href={href({ tag: tag === t.tag ? undefined : t.tag })}
-                  aria-current={tag === t.tag ? "true" : undefined}
-                  className="inline-flex items-center gap-1 rounded-md border border-line bg-surface px-2 py-0.5 text-xs font-medium text-ink-2 hover:border-line-strong aria-[current=true]:border-accent aria-[current=true]:bg-accent-soft aria-[current=true]:text-accent-ink"
-                >
-                  <Tag aria-hidden="true" className="size-3" />
-                  {t.tag}
-                  <span className="text-faint">{t.count}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-
-      <div>
-        <h2 className="mb-1.5 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted">
-          {filtering ? "Matching notes" : "Notes"}
-          <span className="font-medium normal-case tracking-normal">{notes.length}</span>
-        </h2>
-        {all.length === 0 ? (
-          <p className="text-sm text-muted">No notes yet.</p>
-        ) : notes.length === 0 ? (
-          <p className="text-sm text-muted">
-            No notes match.{" "}
-            <Link href="/app/vault" className="text-accent hover:underline underline-offset-4">
-              Clear filters
-            </Link>
-          </p>
-        ) : (
-          <ul className="-mx-1 space-y-0.5">
-            {notes.map((n) => (
-              <li key={n.id}>
-                <Link
-                  href={href({ note: n.id })}
-                  aria-current={note?.id === n.id ? "page" : undefined}
-                  className="block rounded-lg px-2.5 py-2 hover:bg-surface aria-[current=page]:bg-accent-soft"
-                >
-                  <span className="block truncate text-sm font-medium text-ink">{n.title}</span>
-                  {n.excerpt ? (
-                    <span className="mt-0.5 line-clamp-2 block text-xs leading-relaxed text-muted">
-                      {n.excerpt}
-                    </span>
-                  ) : null}
-                  <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[0.6875rem] text-faint">
-                    <span>{formatRelativeTime(n.updatedAt)}</span>
-                    {n.tags.slice(0, 3).map((t) => (
-                      <span key={t}>#{t}</span>
-                    ))}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-
-  const main = note ? (
-    <article
-      aria-labelledby="note-title"
-      className="rounded-card border border-line bg-surface shadow-card"
-    >
-      <header className="flex flex-col gap-3 border-b border-line px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-7 sm:py-5">
-        <div className="min-w-0">
-          <h2
-            id="note-title"
-            className="font-display text-[1.5rem] font-semibold leading-tight tracking-[-0.015em] text-ink text-balance"
-          >
-            {note.title}
-          </h2>
-          <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
-            {note.folder ? (
-              <span className="inline-flex items-center gap-1">
-                <Folder aria-hidden="true" className="size-3.5" />
-                {note.folder}
-              </span>
-            ) : null}
-            <span>Updated {formatDate(note.updatedAt, { withTime: true, short: true })}</span>
-            <span className="inline-flex items-center gap-1">
-              <Lock aria-hidden="true" className="size-3" /> Private unless shared
-            </span>
-          </p>
-          {note.tags.length ? (
-            <ul className="mt-2 flex flex-wrap gap-1.5" aria-label="Tags">
-              {note.tags.map((t) => (
-                <li key={t}>
-                  <Link href={href({ tag: t, note: note.id })}>
-                    <Pill>#{t}</Pill>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-        <div className="flex shrink-0 flex-wrap gap-2">
-          <ButtonLink
-            href={note.href}
-            size="sm"
-            icon={<PencilLine aria-hidden="true" className="size-4" />}
-          >
-            Edit
-          </ButtonLink>
-          <ShareButton noteId={note.id} noteTitle={note.title} />
-        </div>
-      </header>
-      <div className="px-5 py-5 sm:px-7 sm:py-6">
-        {note.body.trim() ? (
-          <Markdown className={WIKI_PROSE_CLASSES}>
-            {wikiToMarkdown(note.body, lookupFromLinks(note.links))}
-          </Markdown>
-        ) : (
-          <p className="text-sm text-muted">
-            This note is empty.{" "}
-            <Link href={note.href} className="text-accent hover:underline underline-offset-4">
-              Start writing
-            </Link>
-          </p>
-        )}
-      </div>
-    </article>
-  ) : (
-    <div className="space-y-4">
-      {missing ? (
-        <div
-          role="alert"
-          className="rounded-card border border-warn/30 bg-warn-soft px-4 py-3 text-sm text-warn"
-        >
-          That note doesn&apos;t exist or isn&apos;t yours. It may have been deleted.
-        </div>
-      ) : null}
-      {all.length === 0 ? (
-        <EmptyState
-          icon={<Lock />}
-          title="Your vault is private"
-          description={
-            <>
-              Notes you write here stay yours; teachers can&apos;t see them unless you share a note
-              with a class. Link ideas with <code className="font-mono">[[double brackets]]</code> —
-              link a concept like{" "}
-              <code className="font-mono">[[Chain rule: powers of functions]]</code> and your
-              mastery shows up beside the note.
-            </>
-          }
-          action={
-            <ButtonLink href="/app/vault/new" icon={<Plus aria-hidden="true" className="size-4" />}>
-              Write your first note
-            </ButtonLink>
-          }
-        />
-      ) : (
-        <div className="rounded-card border border-line bg-surface p-6 shadow-card sm:p-8">
-          <span
-            aria-hidden="true"
-            className="mb-4 inline-flex size-11 items-center justify-center rounded-xl bg-accent-soft text-accent-ink"
-          >
-            <Lock className="size-5" />
-          </span>
-          <h2 className="font-display text-xl font-semibold text-ink">Your vault is private</h2>
-          <p className="mt-2 max-w-prose text-[0.9375rem] leading-relaxed text-muted">
-            Notes you write here stay yours; teachers can&apos;t see them unless you share a note
-            with a class. Pick a note on the left, or start a new one.
-          </p>
-          <ul className="mt-5 grid gap-3 text-sm text-ink-2 sm:grid-cols-3">
-            <li className="rounded-lg border border-line bg-surface-2 p-3">
-              <p className="font-medium text-ink">Link ideas</p>
-              <p className="mt-1 text-muted">
-                Type <code className="font-mono">[[</code> to link a note or a concept.
-              </p>
-            </li>
-            <li className="rounded-lg border border-line bg-surface-2 p-3">
-              <p className="font-medium text-ink">See mastery</p>
-              <p className="mt-1 text-muted">Linked concepts show your current level.</p>
-            </li>
-            <li className="rounded-lg border border-line bg-surface-2 p-3">
-              <p className="font-medium text-ink">Write math</p>
-              <p className="mt-1 text-muted">
-                <code className="font-mono">$x^2$</code> inline,{" "}
-                <code className="font-mono">$$…$$</code> display.
-              </p>
-            </li>
-          </ul>
-          <div className="mt-6 flex flex-wrap gap-2">
-            <ButtonLink href="/app/vault/new" icon={<Plus aria-hidden="true" className="size-4" />}>
-              New note
-            </ButtonLink>
-            <ButtonLink
-              href="/app/vault/graph"
-              variant="secondary"
-              icon={<Network aria-hidden="true" className="size-4" />}
-            >
-              Open the graph
-            </ButtonLink>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-
-  const recent = all.slice(0, 6).map((n) => ({ id: n.id, title: n.title, updatedAt: n.updatedAt }));
-  const aside = (
-    <div className="space-y-4">
-      {note ? (
-        <NoteConnections
-          body={note.body}
-          links={note.links}
-          backlinks={backlinks.map((b) => ({
-            noteId: b.noteId,
-            title: b.title,
-            snippet: b.snippet,
-            href: b.href,
-          }))}
-          skills={skills}
-        />
-      ) : null}
-      <RecentChanges notes={recent} currentId={note?.id} />
-    </div>
-  );
+  const user = await requireStudent();
+  const kb = await getKnowledgeBase(user);
+  const withContent = kb.courses.filter((c) => c.totals.topics > 0);
+  const courseParam = one(sp.course);
+  const course = withContent.find((c) => c.courseId === courseParam) ?? withContent[0] ?? null;
+  const t = course?.totals;
+  // The topic the student touched most recently starts open.
+  const openTopicId = course
+    ? course.units
+        .flatMap((u) => u.topics)
+        .reduce<KnowledgeTopic | null>((m, x) => ((x.lastActivityAt?.getTime() ?? 0) > (m?.lastActivityAt?.getTime() ?? -1) ? x : m), null)?.id
+    : undefined;
+  const watchOut = course ? course.units.flatMap((u) => u.topics.flatMap((x) => x.watchOut.map((w) => ({ ...w, topic: x.title })))) : [];
 
   return (
     <>
       <PageHeader
         title="Knowledge vault"
-        description="Your private, linked notes — connected to what you're learning."
+        description="Everything you've learned, collected as you go. It fills in by itself as you work through lessons and practice, and only you can see it."
         actions={
-          <ButtonLink href="/app/vault/new" icon={<Plus aria-hidden="true" className="size-4" />}>
+          <ButtonLink href="/app/vault/new" variant="secondary" icon={<Plus aria-hidden="true" className="size-4" />}>
             New note
           </ButtonLink>
         }
       />
-      <VaultNav current="notes" />
-      <VaultWorkspace
-        sidebar={sidebar}
-        main={main}
-        aside={aside}
-        hasNote={Boolean(note)}
-        noteCount={all.length}
-      />
-      {all.length >= 200 ? (
-        <p className="mt-4 text-xs text-muted">
-          <Badge tone="info">Note</Badge> The list shows your 200 most recently updated notes. Use
-          search to find older ones.
-        </p>
-      ) : null}
+      <VaultNav current="knowledge" />
+
+      {!course ? (
+        <EmptyState
+          icon={<Sparkles />}
+          title="Your vault fills itself in"
+          description="Start a lesson and the key ideas, definitions and formulas you meet land here, next to how you're doing on each skill. Mistakes your answers show, and the ones you fix, appear too."
+          action={<ButtonLink href="/app/courses">Go to my courses</ButtonLink>}
+        />
+      ) : (
+        <>
+          {withContent.length > 1 ? (
+            <TabLinks
+              className="mb-6"
+              label="Courses in your vault"
+              current={course.courseId}
+              items={withContent.map((c) => ({ id: c.courseId, label: c.name, href: `/app/vault?course=${encodeURIComponent(c.courseId)}` }))}
+            />
+          ) : null}
+
+          <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatTile label="Topics in your vault" value={t!.topics} hint={course.name} icon={<BookOpen />} />
+            <StatTile label="Ideas and formulas" value={t!.keyIdeas + t!.definitions + t!.formulas} hint={`${pluralize(t!.definitions, "definition")} · ${pluralize(t!.formulas, "formula")}`} icon={<Lightbulb />} />
+            <StatTile label="Skills secure" value={`${t!.skillsSecure} / ${t!.skillsStarted}`} hint="Proficient or mastered, of skills started" icon={<Target />} />
+            <StatTile
+              label="Mistakes fixed"
+              value={t!.fixedMisconceptions}
+              hint={t!.watchOut ? `${pluralize(t!.watchOut, "one")} still to watch` : "Nothing to watch right now"}
+              icon={<Sparkles />}
+            />
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+            <div className="min-w-0 space-y-10">
+              {course.units.map((unit) => (
+                <section key={unit.id} aria-labelledby={`unit-${unit.id}`}>
+                  <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                    <h2 id={`unit-${unit.id}`} className="font-display text-xl font-semibold text-ink">
+                      Unit {unit.number}: {unit.title}
+                    </h2>
+                    <p className="text-sm text-muted">
+                      {unit.topics.length} of {unit.topics.length + unit.lockedTopics} topics unlocked
+                    </p>
+                  </div>
+                  <ul className="space-y-3">
+                    {unit.topics.map((topic) => (
+                      <li key={topic.id}>
+                        <TopicCard topic={topic} open={topic.id === openTopicId} />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+
+              {course.upcomingUnits.length ? (
+                <section aria-labelledby="upcoming-units" className="rounded-card border border-dashed border-line-strong px-5 py-4">
+                  <h2 id="upcoming-units" className="flex items-center gap-2 text-sm font-semibold text-ink">
+                    <Lock aria-hidden="true" className="size-4 text-faint" /> Still to unlock
+                  </h2>
+                  <p className="mt-1 text-sm text-muted">These units join your vault when you start their first lesson.</p>
+                  <ul className="mt-3 flex flex-wrap gap-2">
+                    {course.upcomingUnits.map((u) => (
+                      <li key={u.id}>
+                        <Link href={u.href} className="inline-flex items-center rounded-md border border-line bg-surface px-2.5 py-1 text-sm text-ink-2 hover:border-line-strong hover:text-ink">
+                          Unit {u.number}: {u.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+            </div>
+
+            <aside className="space-y-6" aria-label="Vault activity">
+              <section aria-labelledby="recent-title" className="rounded-card border border-line bg-surface p-5 shadow-card">
+                <h2 id="recent-title" className="text-sm font-semibold text-ink">
+                  Recently added
+                </h2>
+                {kb.recent.length ? (
+                  <ol className="mt-3 space-y-3">
+                    {kb.recent.map((r, i) => {
+                      const Icon = RECENT_ICON[r.kind];
+                      return (
+                        <li key={`${r.kind}-${r.href}-${i}`} className="flex gap-2.5 text-sm">
+                          <Icon aria-hidden="true" className={cn("mt-0.5 size-4 shrink-0", r.kind === "fixed" ? "text-good" : r.kind === "skill" ? "text-accent" : "text-faint")} />
+                          <div className="min-w-0">
+                            <Link href={r.href} className="font-medium text-ink underline-offset-4 hover:underline">
+                              {r.label}
+                            </Link>
+                            <p className="text-xs text-muted">
+                              {r.detail} · {formatRelativeTime(r.at)}
+                            </p>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                ) : (
+                  <p className="mt-2 text-sm text-muted">Nothing yet.</p>
+                )}
+              </section>
+
+              {watchOut.length ? (
+                <section aria-labelledby="watch-title" className="rounded-card border border-warn/30 bg-warn-soft p-5">
+                  <h2 id="watch-title" className="flex items-center gap-2 text-sm font-semibold text-ink">
+                    <AlertTriangle aria-hidden="true" className="size-4 text-warn" /> Watch out for
+                  </h2>
+                  <p className="mt-1 text-xs text-ink-2">Mistakes your answers have shown. They clear once you get these questions right on your own.</p>
+                  <ul className="mt-3 space-y-2 text-sm">
+                    {watchOut.slice(0, 6).map((w) => (
+                      <li key={w.id}>
+                        <Link href={`/app/vault/concepts/${encodeURIComponent(w.skillId)}`} className="font-medium text-ink underline-offset-4 hover:underline">
+                          {w.title}
+                        </Link>
+                        <span className="block text-xs text-muted">{w.topic}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+
+              <section aria-labelledby="how-title" className="rounded-card border border-line bg-surface-2 p-5 text-sm text-ink-2">
+                <h2 id="how-title" className="font-semibold text-ink">
+                  How your vault grows
+                </h2>
+                <ul className="mt-2 space-y-1.5">
+                  <li>Lessons add their key ideas, definitions and formulas as you reach them.</li>
+                  <li>Practice updates each skill&apos;s level.</li>
+                  <li>
+                    Your own{" "}
+                    <Link href="/app/vault/notes" className="font-medium text-accent underline-offset-4 hover:underline">
+                      notes
+                    </Link>{" "}
+                    appear under the topics they link to.
+                  </li>
+                </ul>
+              </section>
+            </aside>
+          </div>
+        </>
+      )}
     </>
   );
 }
 
-function FilterChip({ label, href, what }: { label: string; href: string; what: string }) {
+function TopicCard({ topic, open }: { topic: KnowledgeTopic; open: boolean }) {
+  const items = topic.keyIdeas.length + topic.definitions.length + topic.formulas.length;
+  const noteLinks = topic.skills.slice(0, 3).map((s) => `[[${s.name}]]`).join(" · ");
   return (
-    <Link
-      href={href}
-      className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-xs font-medium text-ink-2 hover:border-line-strong"
-    >
-      {label}
-      <X aria-hidden="true" className="size-3" />
-      <span className="sr-only">Remove {what}</span>
-    </Link>
+    <details open={open} className="group rounded-card border border-line bg-surface shadow-card">
+      <summary className="flex cursor-pointer list-none items-start gap-3 px-5 py-4 hover:bg-surface-2 sm:px-6 [&::-webkit-details-marker]:hidden">
+        <div className="min-w-0 flex-1">
+          <h3 className="font-medium leading-snug text-ink">{topic.title}</h3>
+          <p className="mt-0.5 text-xs text-muted">
+            {pluralize(items, "item")} · {pluralize(topic.lessons.filter((l) => l.status === "completed").length, "lesson")} finished
+            {topic.watchOut.length ? ` · ${pluralize(topic.watchOut.length, "thing")} to watch` : ""}
+            {topic.lastActivityAt ? ` · ${formatRelativeTime(topic.lastActivityAt)}` : ""}
+          </p>
+          {topic.skills.length ? (
+            // A glance at skill levels; the full, labelled list is inside the card.
+            <span aria-hidden="true" className="mt-2 flex flex-wrap gap-1.5">
+              {topic.skills.map((s) => (
+                <span key={s.id} title={`${s.name}: ${s.levelLabel}`}>
+                  <MasteryBadge level={s.level} needsReview={s.needsReview} size="sm" showLabel={false} />
+                </span>
+              ))}
+            </span>
+          ) : null}
+        </div>
+        <ChevronDown aria-hidden="true" className="mt-1 size-4 shrink-0 text-faint transition-transform group-open:rotate-180" />
+      </summary>
+
+      <div className="space-y-6 border-t border-line px-5 py-5 sm:px-6">
+        {topic.lessons.length ? (
+          <ul className="flex flex-wrap gap-2" aria-label="Lessons">
+            {topic.lessons.map((l) => (
+              <li key={l.id}>
+                <Link
+                  href={l.href}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface-2 px-2.5 py-1 text-xs font-medium text-ink-2 hover:border-line-strong hover:text-ink"
+                >
+                  {l.status === "completed" ? <CheckCircle2 aria-hidden="true" className="size-3.5 text-good" /> : <CircleDot aria-hidden="true" className="size-3.5 text-accent" />}
+                  <span className="tabular-nums text-muted">{l.number}</span> {l.title}
+                  <span className="sr-only">{l.status === "completed" ? "(finished)" : "(in progress)"}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        {topic.keyIdeas.length ? (
+          <Block icon={<Lightbulb />} title="Key ideas">
+            <ul className="list-disc space-y-1.5 pl-5 text-[0.9375rem] leading-relaxed text-ink-2 marker:text-faint">
+              {topic.keyIdeas.map((k) => (
+                <li key={k.text}>
+                  <InlineMarkdown>{k.text}</InlineMarkdown>
+                </li>
+              ))}
+            </ul>
+          </Block>
+        ) : null}
+
+        {topic.definitions.length ? (
+          <Block icon={<BookOpen />} title="Definitions">
+            <dl className="grid gap-3 sm:grid-cols-2">
+              {topic.definitions.map((d) => (
+                <div key={d.term} className="rounded-lg border border-line bg-surface-2 px-3.5 py-3">
+                  <dt className="font-medium text-ink">
+                    <InlineMarkdown>{d.term}</InlineMarkdown>
+                  </dt>
+                  <dd className="mt-1 text-sm text-ink-2">
+                    <Markdown compact>{d.md}</Markdown>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </Block>
+        ) : null}
+
+        {topic.formulas.length ? (
+          <Block icon={<Sigma />} title="Formulas">
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {topic.formulas.map((f) => (
+                <li key={f.latex} className="rounded-lg border border-line bg-surface-2 px-3.5 py-2">
+                  <div className="overflow-x-auto">
+                    <Markdown compact>{`$$\n${f.latex}\n$$`}</Markdown>
+                  </div>
+                  {f.caption ? <p className="text-center text-xs text-muted">{f.caption}</p> : null}
+                </li>
+              ))}
+            </ul>
+          </Block>
+        ) : null}
+
+        {topic.skills.length ? (
+          <Block icon={<Target />} title="Your skills">
+            <ul className="divide-y divide-line rounded-lg border border-line">
+              {topic.skills.map((s) => (
+                <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5">
+                  <Link href={s.href} className="min-w-0 text-sm font-medium text-ink underline-offset-4 hover:underline">
+                    {s.name}
+                  </Link>
+                  <MasteryBadge level={s.level} needsReview={s.needsReview} size="sm" />
+                </li>
+              ))}
+            </ul>
+          </Block>
+        ) : null}
+
+        {topic.watchOut.length || topic.fixed.length ? (
+          <Block icon={<AlertTriangle />} title="Mistakes">
+            <ul className="space-y-2 text-sm">
+              {topic.watchOut.map((w) => (
+                <li key={w.id} className="rounded-lg border border-warn/30 bg-warn-soft px-3.5 py-2.5">
+                  <p className="font-medium text-ink">Watch out: {w.title}</p>
+                  <div className="mt-0.5 text-ink-2">
+                    <Markdown compact>{w.remediation}</Markdown>
+                  </div>
+                </li>
+              ))}
+              {topic.fixed.map((f) => (
+                <li key={f.id} className="flex items-center gap-2 text-ink-2">
+                  <CheckCircle2 aria-hidden="true" className="size-4 shrink-0 text-good" />
+                  <span>
+                    Fixed: <span className="font-medium text-ink">{f.title}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Block>
+        ) : null}
+
+        <Block icon={<FileText />} title="Your notes">
+          {topic.notes.length ? (
+            <ul className="mb-2 space-y-1 text-sm">
+              {topic.notes.map((n) => (
+                <li key={n.id}>
+                  <Link href={n.href} className="font-medium text-accent underline-offset-4 hover:underline">
+                    {n.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <Link
+            href={newNoteHref(`Notes on ${topic.title}`, noteLinks ? `${noteLinks}\n\n` : undefined)}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-accent underline-offset-4 hover:underline"
+          >
+            <Plus aria-hidden="true" className="size-4" />
+            Add a note on this topic
+          </Link>
+        </Block>
+      </div>
+    </details>
   );
 }
 
-function SideLink({
-  href,
-  active,
-  icon,
-  label,
-  count,
-}: {
-  href: string;
-  active: boolean;
-  icon: ReactNode;
-  label: string;
-  count: number;
-}) {
+function Block({ icon, title, children }: { icon: React.ReactElement; title: string; children: React.ReactNode }) {
   return (
-    <Link
-      href={href}
-      aria-current={active ? "true" : undefined}
-      className={cn(
-        "flex items-center gap-2 rounded-md px-2 py-1 text-ink-2 hover:bg-surface hover:text-ink",
-        active && "bg-accent-soft font-medium text-accent-ink",
-      )}
-    >
-      <span aria-hidden="true" className="text-muted">
-        {icon}
-      </span>
-      <span className="min-w-0 flex-1 truncate">{label}</span>
-      <span className="text-xs text-faint">{count}</span>
-    </Link>
+    <section>
+      <h4 className="mb-2 flex items-center gap-1.5 text-[0.75rem] font-semibold uppercase tracking-[0.07em] text-muted">
+        <span aria-hidden="true" className="[&>svg]:size-3.5">
+          {icon}
+        </span>
+        {title}
+      </h4>
+      {children}
+    </section>
   );
 }

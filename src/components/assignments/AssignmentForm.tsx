@@ -75,6 +75,7 @@ const GRADING_FOR: Record<Kind, Grading[]> = {
 };
 
 const ASSESSMENT_KIND: Record<string, string> = {
+  exercise: "Exercise",
   skill_quiz: "Skill quiz",
   lesson_quiz: "Lesson quiz",
   unit_test: "Unit test",

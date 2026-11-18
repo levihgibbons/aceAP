@@ -63,4 +63,19 @@ export const CONTENT_SOURCES: ContentSourceRow[] = [
     notes: "No OpenStax text or figures are used. Non-commercial (NC) titles could not be adapted for a commercial product. Verify the licence of each specific work before linking or adapting.",
     reviewedOn: null,
   },
+  {
+    id: "openstax-college-physics-ap-2e",
+    title: "College Physics for AP® Courses 2e",
+    provider: "OpenStax, Rice University",
+    url: "https://openstax.org/details/books/college-physics-ap-courses-2e",
+    license: "CC BY 4.0 (as stated on the book's page; re-verify before any adaptation).",
+    attribution: "If text or figures are ever adapted: “Access for free at openstax.org”, with the CC BY 4.0 notice and a list of changes.",
+    commercialUse: "allowed",
+    modification: "allowed",
+    usage: "alignment_reference",
+    approvalStatus: "pending_review",
+    notes:
+      "Consulted only to check the topic scope of the AP Physics 1 units (which ideas an algebra-based course covers, and in what order). No OpenStax text, worked examples, problems or figures are reproduced or adapted; every AceAP lesson and question is original. Human review should confirm the licence before any future adaptation.",
+    reviewedOn: null,
+  },
 ];

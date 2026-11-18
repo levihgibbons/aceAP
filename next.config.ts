@@ -1,4 +1,15 @@
+import { networkInterfaces } from "node:os";
 import type { NextConfig } from "next";
+
+/**
+ * Dev only: let phones and laptops on the same network open the dev server at
+ * this machine's private LAN address (Next blocks dev assets for any host
+ * other than localhost by default). Has no effect on production builds.
+ */
+const lanAddresses = Object.values(networkInterfaces())
+  .flat()
+  .filter((a) => a && a.family === "IPv4" && !a.internal && /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(a.address))
+  .map((a) => a!.address);
 
 /**
  * AceAP renders per-user, authenticated data on almost every route, so we use
@@ -20,6 +31,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Lets several dev servers run side by side (each with its own output folder).
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  allowedDevOrigins: lanAddresses,
   poweredByHeader: false,
   // Native / WASM packages must not be bundled into server chunks.
   serverExternalPackages: ["@electric-sql/pglite", "pg"],

@@ -5,10 +5,10 @@ lessons, AP-style practice and assessment, native simulations, a lesson-aware
 AI tutor and a personal knowledge vault — all built on **one evidence-based
 mastery record** that students and teachers share.
 
-> **Status: pre-release.** Three pilot learning sequences (AP Calculus AB —
-> chain rule; AP Microeconomics — firm costs and profit maximisation; AP
-> Physics 1 — 1-D kinematics) and all 43 AP courses in the catalog with honest
-> content status. See [docs/ROADMAP.md](docs/ROADMAP.md) for exactly what is
+> **Status: pre-release.** AP Physics 1 covers the full course (all 8 units,
+> 88 lessons, 125 practice exercises, 1,573 questions); AP Calculus AB (chain
+> rule) and AP Microeconomics (firm costs and profit maximisation) have pilot
+> sequences; all 43 AP courses are in the catalog with honest content status. See [docs/ROADMAP.md](docs/ROADMAP.md) for exactly what is
 > implemented, tested, and still open. Public demo (fictional data only):
 > <https://aceap-five.vercel.app> — hosting notes in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 

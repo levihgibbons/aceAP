@@ -3,14 +3,15 @@
  */
 import { TabLinks } from "@/components/ui";
 
-export function VaultNav({ current }: { current: "notes" | "graph" | "export" }) {
+export function VaultNav({ current }: { current: "knowledge" | "notes" | "graph" | "export" }) {
   return (
     <TabLinks
       label="Knowledge vault sections"
       current={current}
       className="mb-6"
       items={[
-        { id: "notes", label: "Notes", href: "/app/vault" },
+        { id: "knowledge", label: "My knowledge", href: "/app/vault" },
+        { id: "notes", label: "Notes", href: "/app/vault/notes" },
         { id: "graph", label: "Graph", href: "/app/vault/graph" },
         { id: "export", label: "Export", href: "/app/vault/export" },
       ]}

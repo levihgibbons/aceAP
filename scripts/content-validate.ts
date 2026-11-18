@@ -2,7 +2,7 @@
  * `npm run content:validate` — run authored courses through the validator.
  * With no arguments it checks every registered course; pass one or more
  * course file paths to check files that are not registered yet:
- *   npx tsx scripts/content-validate.ts content/courses/physics-1.ts
+ *   npx tsx scripts/content-validate.ts content/courses/physics-1/index.ts
  */
 import path from "node:path";
 import { pathToFileURL } from "node:url";

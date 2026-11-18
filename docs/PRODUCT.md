@@ -18,7 +18,10 @@ top of one evidence-based mastery record shared with teachers.
 ## Core flows
 
 ### Structured learning
-Course → units → topics → lessons. Each lesson mixes explanation, worked
+Course → units → topics. Each topic teaches with **lessons** and then puts the
+learning to work in **exercises** (topic practice sets), with checkpoint quizzes
+partway through a unit and a unit test at the end — one numbered roadmap per
+course. Each lesson mixes explanation, worked
 examples revealed step by step, check questions, simulations, note prompts and
 tutor prompts. Status per lesson/skill: Not started, In progress, Needs review,
 Proficient, Mastered. Students can jump to any topic — nothing is locked.
@@ -29,7 +32,10 @@ student's own notes from natural questions ("how do I find profit-maximizing
 quantity?").
 
 ### Practice and assessment
-Guided practice (immediate feedback, hints, retries, solutions — counted for
+Exercises: topic practice sets on the roadmap that draw a fresh set of questions
+from a larger pool on every try (unseen and previously missed questions first),
+with immediate feedback and hints; recorded as guided practice. Guided practice
+per skill (immediate feedback, hints, retries, solutions — counted for
 less), skill and lesson quizzes, unit tests (timed, feedback after submit),
 mixed spaced review, AP-style exam practice sets and teacher assignments with
 due dates, attempt limits, accommodations and AI policies. All produce
@@ -49,7 +55,10 @@ mastery-to-grade policy with preview, overrides that never alter evidence, CSV
 export, Canvas integration status.
 
 ### Knowledge vault
-Private Markdown notes with `[[wiki links]]` to notes and curriculum concepts,
+A personal knowledge base that builds itself from each student's progress:
+"My knowledge" collects, topic by topic, the key ideas, definitions and
+formulas from lessons as they reach them, their level on each skill, mistakes
+to watch for and the ones they have fixed. Alongside it: private Markdown notes with `[[wiki links]]` to notes and curriculum concepts,
 tags, backlinks, concept pages showing the student's own mastery and
 misconceptions, a knowledge graph (shared curriculum relationships + the
 student's overlay, including cross-course links), scoped sharing, JSON/Markdown

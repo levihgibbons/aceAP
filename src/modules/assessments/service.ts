@@ -68,13 +68,27 @@ function seededShuffle<T>(items: T[], seed: string): T[] {
  * ones last answered incorrectly, then the least recently seen — rotating
  * through skills and problem patterns so practice is varied.
  */
-export async function pickQuestions(db: Db, userId: string, skillIds: string[], count: number, seed: string): Promise<{ questionId: string; version: number }[]> {
+export async function pickQuestions(
+  db: Db,
+  userId: string,
+  skillIds: string[],
+  count: number,
+  seed: string,
+  /** Restrict the draw to these questions (an exercise's pool). */
+  poolIds?: string[],
+): Promise<{ questionId: string; version: number }[]> {
   if (skillIds.length === 0 || count <= 0) return [];
   const pool = await db
     .select({ id: t.questions.id, version: t.questions.publishedVersion, skillId: t.questions.primarySkillId, type: t.questions.type, pattern: t.questionVersions.pattern })
     .from(t.questions)
     .innerJoin(t.questionVersions, and(eq(t.questionVersions.questionId, t.questions.id), eq(t.questionVersions.version, t.questions.publishedVersion)))
-    .where(and(inArray(t.questions.primarySkillId, skillIds), sql`${t.questions.type} <> 'short_response'`));
+    .where(
+      and(
+        inArray(t.questions.primarySkillId, skillIds),
+        sql`${t.questions.type} <> 'short_response'`,
+        poolIds ? inArray(t.questions.id, poolIds.length ? poolIds : [""]) : undefined,
+      ),
+    );
   if (pool.length === 0) return [];
 
   const history = await db
@@ -126,6 +140,8 @@ export async function pickQuestions(db: Db, userId: string, skillIds: string[], 
 
 function modeForAssessmentKind(kind: string): t.AttemptMode {
   switch (kind) {
+    case "exercise":
+      return "guided_practice";
     case "lesson_quiz":
     case "skill_quiz":
     case "unit_test":
@@ -238,9 +254,15 @@ export async function startAttempt(userId: string, spec: StartSpec, now: Date = 
         if (open) return { attemptId: open.id, resumed: true };
       }
       const itemRows = await db.select().from(t.assessmentItems).where(eq(t.assessmentItems.assessmentId, assessment.id)).orderBy(asc(t.assessmentItems.ordinal));
-      const items = await publishedItems(db, itemRows.map((i) => i.questionId));
-      if (items.length === 0) throw new DomainError("invalid", "This assessment has no published questions.");
       const config: AssessmentConfig = assessment.config;
+      const poolIds = itemRows.map((i) => i.questionId);
+      let items: { questionId: string; version: number }[];
+      if (config.questionsPerAttempt && poolIds.length > config.questionsPerAttempt) {
+        // Exercise: a fresh draw from the pool each attempt (unseen and missed questions first).
+        const poolSkills = await db.selectDistinct({ id: t.questions.primarySkillId }).from(t.questions).where(inArray(t.questions.id, poolIds));
+        items = await pickQuestions(db, userId, poolSkills.map((s) => s.id), config.questionsPerAttempt, seed, poolIds);
+      } else items = await publishedItems(db, poolIds);
+      if (items.length === 0) throw new DomainError("invalid", "This assessment has no published questions.");
       values = {
         userId,
         courseId: assessment.courseId,

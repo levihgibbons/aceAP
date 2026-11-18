@@ -73,6 +73,28 @@ status. Current entries:
 
 Never bulk-import AP Classroom questions or proprietary textbooks.
 
+## Exercises
+
+An assessment with `kind: "exercise"` is a topic practice set. It must have a
+`topicId` (the roadmap shows it after that topic's lessons), immediate
+feedback, no time limit and `config.questionsPerAttempt`; its `questionIds` are
+a pool with at least `questionsPerAttempt + 2` questions. Each try draws
+`questionsPerAttempt` questions from the pool (unseen, then missed, then
+correct; varied patterns). Attempts are recorded as `guided_practice`, so the
+mastery policy is unchanged. Quizzes with a `topicId` appear after that topic;
+assessments without one appear at the end of the unit.
+
+## AP Physics 1 layout
+
+`content/courses/physics-1/` holds one file per unit (`unit-1.ts` …
+`unit-8.ts`, each with `unit-N.questions.ts`) exporting a `UnitPart`;
+`index.ts` merges them into the course. IDs are global, so each unit uses its own
+prefixes (`physics-1.uN.*` skills, `physics-1.l.uN.*` lessons,
+`physics-1.q.uN.*` questions, `physics-1.ex.uN.*` exercises; Unit 1 keeps its
+original ids). Check one unit on its own with
+`npx tsx scripts/validate-physics-unit.ts N`; the full course is checked by
+`npm run content:validate`.
+
 ## Adding a course
 
 1. Create `content/courses/<id>.ts` and `<id>.questions.ts` (copy the

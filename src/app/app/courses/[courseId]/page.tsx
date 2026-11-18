@@ -180,7 +180,7 @@ export default async function CoursePage({ params }: Params) {
                 Roadmap
               </h2>
               <p className="mt-1 text-sm text-muted">
-                Units in order, lessons numbered by unit, then each unit&apos;s quizzes and tests. Open anything at any
+                Units in order. Each topic teaches with lessons, then practice exercises apply it; quizzes and tests check it. Open anything at any
                 time.
               </p>
             </div>

@@ -1,40 +1,39 @@
 /**
- * AP Physics 1: Algebra-Based — pilot sequence: Unit 1, Kinematics
- * (motion along a line, vectors, relative motion and projectile motion).
+ * AP Physics 1 — Unit 1: Kinematics (motion along a line, motion diagrams and
+ * graphs, constant acceleration, free fall, motion data, vectors, relative
+ * motion and projectile motion). Assembled into the course in ./index.ts.
+ * Each topic teaches in lessons, then practises in exercises (pools of nine,
+ * five per attempt); Quiz 1 and Quiz 2 close each half and the unit test ends
+ * the unit. Ids that predate the exercises are live in databases: keep them.
  *
- * Original AceAP instructional content. The unit title follows College Board's
- * published unit name (see content/catalog/ap-catalog.json); objective codes
- * ("PHYS-1.C") are AceAP's own and are not College Board codes.
- *
- * Algebra-based throughout: slopes and areas of graphs, no calculus notation.
- * Free-fall and projectile examples use g = 9.8 m/s² with up as the positive
- * direction and no air resistance unless a problem says otherwise. Free fall is
- * taught inside the constant-acceleration lesson rather than as its own topic.
+ * Original AceAP instructional content. Objective codes ("PHYS-1.C") are
+ * AceAP's own and are not College Board codes. Algebra-based throughout;
+ * g = 9.8 m/s², up positive, no air resistance unless a problem says otherwise.
  */
-import { defineCourse } from "@/modules/content/schema";
-import { physicsQuestions } from "./physics-1.questions";
+import type { UnitPart } from "./shared";
+import { physicsQuestions } from "./unit-1.questions";
 
 const r = String.raw;
 const S = (id: string) => `physics-1.${id}`;
 const Q = (id: string) => `physics-1.q.${id}`;
 const M = (id: string) => `physics-1.m.${id}`;
 
-export default defineCourse({
-  courseId: "physics-1",
-  version: {
-    id: "physics-1@2025",
-    label: "Aligned to the AP Physics 1: Algebra-Based course framework (current in 2025–26)",
-    alignmentSourceUrl: "https://apcentral.collegeboard.org/courses/ap-physics-1",
-    alignmentNotes:
-      "The unit name matches the published course outline. Topics, objectives, lessons and questions are original AceAP content written to address the kinematics unit; they do not reproduce College Board text. The unit covers scalars and vectors, motion along a line and its graphs, constant acceleration including free fall, reference frames and relative motion, and two-dimensional (projectile) motion.",
-  },
-  provenance: {
-    author: "AceAP curriculum team",
-    origin: "ai_assisted_original",
-    reviewedBy: "Automated answer validation; human subject-matter review pending",
-    notes: "Every numeric answer and answer key is machine-checked by content:validate.",
-  },
+/**
+ * A topic exercise: a pool of `size` questions with ids physics-1.q.u1.<slug>-1 … -<size>, served five at a
+ * time with immediate feedback and hints allowed.
+ */
+const EX = (slug: string, topicId: string, title: string, description: string, size = 9): UnitPart["assessments"][number] => ({
+  id: `physics-1.ex.u1.${slug}`,
+  kind: "exercise",
+  title,
+  description,
+  unitId: "physics-1.u1",
+  topicId,
+  questionIds: Array.from({ length: size }, (_, i) => Q(`u1.${slug}-${i + 1}`)),
+  config: { feedback: "immediate", assistance: "allowed", questionsPerAttempt: 5 },
+});
 
+export const unit1: UnitPart = {
   skills: [
     {
       id: S("position-displacement"),
@@ -105,7 +104,7 @@ export default defineCourse({
       difficulty: 3,
       keywords: ["velocity time graph", "v-t graph", "area under velocity time graph", "slope of velocity time graph", "slope is acceleration", "area is displacement", "graph crosses the time axis", "negative area"],
       prerequisites: [S("acceleration-concept"), S("xt-graphs")],
-      patternLabels: { "slope-acceleration": "Acceleration from the slope", "area-displacement": "Displacement from the area", "shape-to-motion": "Shape to motion", "area-below-axis": "Area below the axis", "axis-crossing": "Crossing the time axis", "interpret-all": "Reading everything from one graph" },
+      patternLabels: { "slope-acceleration": "Acceleration from the slope", "area-displacement": "Displacement from the area", "shape-to-motion": "Shape to motion", "area-below-axis": "Area below the axis", "axis-crossing": "Crossing the time axis", "interpret-all": "Reading everything from one graph", "trapezoid-area": "Areas of trapezoids", "final-position": "Final position from the area" },
     },
     {
       id: S("kinematic-equations"),
@@ -114,7 +113,7 @@ export default defineCourse({
       difficulty: 4,
       keywords: ["kinematic equations", "constant acceleration", "v = v0 + at", "x = x0 + v0 t + 1/2 a t^2", "v^2 = v0^2 + 2 a delta x", "which kinematic equation to use", "free fall", "g = 9.8", "stopping distance", "turnaround point", "thrown straight up"],
       prerequisites: [S("speeding-slowing"), S("vt-graphs")],
-      patternLabels: { "velocity-time": "Velocity after a time", "position-time": "Position after a time", "stopping-distance": "Stopping distance", "free-fall": "Free fall", proportional: "Proportional reasoning", "choose-equation": "Choosing an equation", turnaround: "Motion Lab: turnaround", "sim-readout": "Motion Lab: position" },
+      patternLabels: { "velocity-time": "Velocity after a time", "position-time": "Position after a time", "stopping-distance": "Stopping distance", "free-fall": "Free fall", proportional: "Proportional reasoning", "choose-equation": "Choosing an equation", turnaround: "Motion Lab: turnaround", "sim-readout": "Motion Lab: position", "identify-knowns": "Listing the knowns", "leaves-out": "What each equation leaves out", "symbolic-solve": "Solving in symbols", "spot-the-error": "Spotting a wrong equation choice", "solution-routine": "The problem-solving routine", "time-to-speed": "Time to reach a speed", "find-acceleration": "Finding the acceleration", "average-velocity-method": "Displacement from the average velocity", "two-stage": "Two-stage motion", "turnaround-time": "When it turns around", "turnaround-position": "Where it turns around", "turnaround-distance": "Distance through a turnaround", "turnaround-reasoning": "Reasoning about a turnaround", meeting: "Catching up" },
     },
     {
       id: S("scalars-vectors"),
@@ -123,7 +122,7 @@ export default defineCourse({
       difficulty: 2,
       keywords: ["scalar", "vector", "magnitude", "direction", "resultant", "head to tail", "adding vectors", "vector addition", "perpendicular vectors", "pythagorean theorem", "negative of a vector", "is speed a vector"],
       prerequisites: [S("distance-vs-displacement")],
-      patternLabels: { classify: "Scalar or vector?", "perpendicular-resultant": "Resultant of perpendicular vectors", "resultant-range": "Possible sizes of a resultant", "collinear-sum": "Adding vectors along a line", "head-to-tail": "Adding by drawing head to tail", "vector-algebra": "Negatives and multiples of vectors", "vector-difference": "Change in a vector" },
+      patternLabels: { classify: "Scalar or vector?", "perpendicular-resultant": "Resultant of perpendicular vectors", "resultant-range": "Possible sizes of a resultant", "collinear-sum": "Adding vectors along a line", "head-to-tail": "Adding by drawing head to tail", "vector-algebra": "Negatives and multiples of vectors", "vector-difference": "Change in a vector", "resultant-direction": "Direction of a resultant" },
     },
     {
       id: S("vector-components"),
@@ -132,7 +131,7 @@ export default defineCourse({
       difficulty: 3,
       keywords: ["vector components", "x component", "y component", "resolving vectors", "sine and cosine", "adding vectors by components", "magnitude and direction", "inverse tangent", "horizontal component", "vertical component", "trigonometry"],
       prerequisites: [S("scalars-vectors")],
-      patternLabels: { resolve: "Finding components", "component-signs": "Signs of components", "component-expression": "Components in symbols", "add-components": "Adding by components", "magnitude-direction": "Magnitude and direction from components" },
+      patternLabels: { resolve: "Finding components", "component-signs": "Signs of components", "component-expression": "Components in symbols", "add-components": "Adding by components", "magnitude-direction": "Magnitude and direction from components", "magnitude-from-component": "Magnitude from one component", "missing-vector": "Finding a missing vector" },
     },
     {
       id: S("relative-velocity-1d"),
@@ -141,7 +140,7 @@ export default defineCourse({
       difficulty: 2,
       keywords: ["reference frame", "frame of reference", "relative velocity", "relative motion", "moving walkway", "velocity relative to", "observer", "overtaking", "closing speed", "walking on a train"],
       prerequisites: [S("velocity-sign-direction")],
-      patternLabels: { walkway: "Moving walkways", "opposite-directions": "Moving toward each other", "in-vehicle": "Walking inside a moving vehicle", "frame-concept": "Describing motion from different frames", "closing-time": "Time to meet or catch up" },
+      patternLabels: { walkway: "Moving walkways", "opposite-directions": "Moving toward each other", "in-vehicle": "Walking inside a moving vehicle", "frame-concept": "Describing motion from different frames", "closing-time": "Time to meet or catch up", "same-direction": "Moving the same way", "upstream-downstream": "Up and back along a current" },
     },
     {
       id: S("relative-velocity-2d"),
@@ -150,7 +149,7 @@ export default defineCourse({
       difficulty: 3,
       keywords: ["river crossing", "boat and current", "airplane crosswind", "plane in wind", "ground speed", "airspeed", "heading", "drift downstream", "aim upstream", "relative velocity vectors"],
       prerequisites: [S("relative-velocity-1d"), S("vector-components")],
-      patternLabels: { "river-resultant": "Speed relative to the shore", "crossing-time": "Time to cross", "downstream-drift": "Drift downstream", "heading-upstream": "Aiming to go straight across", "plane-wind": "Aircraft in a crosswind", "symbolic-crossing": "Crossing time in symbols" },
+      patternLabels: { "river-resultant": "Speed relative to the shore", "crossing-time": "Time to cross", "downstream-drift": "Drift downstream", "heading-upstream": "Aiming to go straight across", "plane-wind": "Aircraft in a crosswind", "symbolic-crossing": "Crossing time in symbols", "current-effects": "What the current changes", "symbolic-drift": "Drift in symbols", "plane-heading": "Heading into a crosswind", "ground-direction": "Direction of travel over the ground" },
     },
     {
       id: S("projectile-horizontal"),
@@ -159,7 +158,7 @@ export default defineCourse({
       difficulty: 3,
       keywords: ["projectile motion", "horizontal launch", "thrown horizontally", "rolls off a table", "independence of horizontal and vertical motion", "time of flight", "horizontal distance", "dropped and thrown land together", "two dimensional motion"],
       prerequisites: [S("kinematic-equations"), S("vector-components")],
-      patternLabels: { "dropped-vs-thrown": "Dropped vs launched", "time-from-height": "Time to fall", "horizontal-range": "How far it lands", "independence-concept": "Independent components", "landing-velocity": "Velocity at landing", "compare-launches": "Comparing two launches", symbolic: "Results in symbols", "launch-speed": "Working back to the launch speed" },
+      patternLabels: { "dropped-vs-thrown": "Dropped vs launched", "time-from-height": "Time to fall", "horizontal-range": "How far it lands", "independence-concept": "Independent components", "landing-velocity": "Velocity at landing", "compare-launches": "Comparing two launches", symbolic: "Results in symbols", "launch-speed": "Working back to the launch speed", "component-table": "Reading a table of positions", "graph-shapes": "Shapes of component graphs" },
     },
     {
       id: S("projectile-angled"),
@@ -168,7 +167,61 @@ export default defineCourse({
       difficulty: 4,
       keywords: ["projectile launched at an angle", "launch angle", "maximum height", "range", "time of flight", "top of the trajectory", "velocity at the top", "acceleration at the top", "complementary angles", "45 degrees maximum range"],
       prerequisites: [S("projectile-horizontal")],
-      patternLabels: { "top-of-path": "At the top of the path", "time-to-top": "Time to the top", "max-height": "Maximum height", range: "Range on level ground", symmetry: "Symmetry of the flight", "launch-from-height": "Angled launch from a height", "compare-angles": "Comparing launch angles", "symbolic-flight": "Time of flight in symbols" },
+      patternLabels: { "top-of-path": "At the top of the path", "time-to-top": "Time to the top", "max-height": "Maximum height", range: "Range on level ground", symmetry: "Symmetry of the flight", "launch-from-height": "Angled launch from a height", "compare-angles": "Comparing launch angles", "symbolic-flight": "Time of flight in symbols", "launch-components": "Resolving the launch velocity", "symbolic-height": "Maximum height in symbols", "graph-shapes": "Shapes of component graphs", "graph-slope": "Slopes of component graphs", "component-table": "Reading a table of components", "speed-graph": "Speed through the flight", "graph-area": "Height from the area under the vertical-velocity graph" },
+    },
+    {
+      id: S("u1.motion-diagrams"),
+      name: "Motion diagrams",
+      description: "Read and build motion diagrams (dots at equal time intervals with velocity and acceleration arrows) and use them to tell constant velocity, speeding up, slowing down and turning around apart.",
+      difficulty: 2,
+      keywords: ["motion diagram", "dot diagram", "strobe diagram", "ticker tape", "equal time intervals", "velocity arrows", "acceleration arrow", "dots getting closer", "dots spreading out", "spacing of dots"],
+      prerequisites: [S("acceleration-concept")],
+      patternLabels: { "read-spacing": "Reading the dot spacing", "acceleration-arrow": "Direction of the acceleration arrow", turnaround: "Turning around", "spacing-to-acceleration": "Acceleration from the spacing", "match-description": "Matching a diagram to a description", "from-graph": "Motion diagram from a graph" },
+    },
+    {
+      id: S("u1.graph-connections"),
+      name: "Connecting position, velocity and acceleration graphs",
+      description: "Translate one motion between its position–time, velocity–time and acceleration–time graphs using slopes (going down the chain) and areas (going up it).",
+      difficulty: 3,
+      keywords: ["acceleration time graph", "a-t graph", "sketch velocity graph from position graph", "connect motion graphs", "slope of position graph gives velocity graph", "area under acceleration graph", "change in velocity from area", "matching graphs of the same motion"],
+      prerequisites: [S("xt-graphs"), S("vt-graphs")],
+      patternLabels: { "xt-to-vt": "Position graph to velocity graph", "vt-to-at": "Velocity graph to acceleration graph", "at-to-dv": "Change in velocity from an acceleration graph", "match-graphs": "Matching graphs of the same motion", "vt-to-xt": "Velocity graph to position graph" },
+    },
+    {
+      id: S("u1.free-fall-concepts"),
+      name: "Free fall: reasoning",
+      description: "Explain free fall as motion with only gravity acting: the same downward acceleration for every object, at every point of the flight, whether it is rising, at the top or falling.",
+      difficulty: 2,
+      keywords: ["free fall", "heavier objects fall faster", "acceleration due to gravity", "g = 9.8 m/s^2", "thrown up acceleration", "free fall on the way up", "feather and hammer", "air resistance", "symmetry of vertical throw"],
+      prerequisites: [S("acceleration-concept")],
+      patternLabels: { "same-acceleration": "Every mass falls alike", "accel-on-path": "Acceleration on the way up, at the top and down", signs: "Signs of velocity and acceleration", symmetry: "Symmetry of a vertical throw", "vt-graph": "Velocity–time graph of a vertical throw", "compare-objects": "Comparing two falling objects" },
+    },
+    {
+      id: S("u1.free-fall-calculations"),
+      name: "Free fall: calculations",
+      description: "Apply the constant-acceleration equations with a = −9.8 m/s² (up positive) to drops, upward throws and downward throws, including objects launched from a height.",
+      difficulty: 3,
+      keywords: ["free fall problems", "dropped from a height", "how long to fall", "speed when it hits the ground", "maximum height of a throw", "thrown straight up", "thrown downward", "time in the air", "a = -9.8"],
+      prerequisites: [S("u1.free-fall-concepts"), S("kinematic-equations")],
+      patternLabels: { "drop-time": "Time to fall from rest", "drop-speed": "Speed after falling", "max-height": "Maximum height of a throw", "time-to-top": "Time to the top", "thrown-down": "Thrown downward", "launch-from-height": "Thrown from a height, landing below", symbolic: "Free fall in symbols", "position-at-time": "Position at a later time", "drop-distance": "Distance fallen in a given time" },
+    },
+    {
+      id: S("u1.motion-data"),
+      name: "Reading motion data tables",
+      description: "Extract velocities and accelerations from tables of position or velocity against time, decide whether the velocity or acceleration is constant, and spot the pattern of position changes in equal time intervals.",
+      difficulty: 3,
+      keywords: ["data table", "position time data", "velocity from data", "acceleration from data", "first differences", "second differences", "constant acceleration test", "experimental data", "motion sensor", "photogate"],
+      prerequisites: [S("average-velocity-speed"), S("acceleration-concept")],
+      patternLabels: { "velocity-from-table": "Velocity from a position table", "constant-check": "Is it constant?", "acceleration-from-table": "Acceleration from data", "odd-number-spacing": "Spacing in equal intervals from rest", "fastest-interval": "Which interval is fastest?", "instantaneous-estimate": "Estimating velocity at an instant" },
+    },
+    {
+      id: S("u1.linearization"),
+      name: "Linearizing data and proportional reasoning",
+      description: "Choose what to plot so that motion data fall on a straight line (for example position against time squared), interpret the slope and intercept physically, and predict how one quantity scales when another changes.",
+      difficulty: 4,
+      keywords: ["linearization", "linearize data", "x vs t squared", "plot against t^2", "slope gives acceleration", "best fit line", "proportional reasoning", "doubling the time", "scaling", "straight-line graph"],
+      prerequisites: [S("u1.motion-data"), S("kinematic-equations")],
+      patternLabels: { "choose-axes": "Choosing axes for a straight line", "slope-meaning": "What the slope means", "slope-to-a": "Acceleration from a slope", "proportional-scale": "Scaling with squares and roots", "intercept-meaning": "Reading slope and intercept" },
     },
   ],
 
@@ -193,6 +246,15 @@ export default defineCourse({
     { id: M("wrong-launch-vy"), skillId: S("projectile-angled"), title: "Uses the wrong vertical launch velocity for an angled launch", description: "Treats an angled launch as if the vertical velocity started at zero (as it does for a horizontal launch), or uses the whole launch speed in place of its vertical component.", remediation: "Resolve the launch velocity first: v₀ₓ = v₀ cos θ and v₀ᵧ = v₀ sin θ for an angle θ above the horizontal. The vertical motion starts with v₀ᵧ, which is neither zero nor the full launch speed. Only a horizontal launch (θ = 0) has v₀ᵧ = 0." },
     { id: M("velocity-zero-at-top"), skillId: S("projectile-angled"), title: "Thinks a projectile's velocity is zero at the top of its path", description: "Says the projectile is momentarily at rest at its highest point, forgetting that only the vertical component of the velocity is zero there.", remediation: "At the top the vertical velocity is zero, which is why it stops rising. The horizontal velocity is unchanged, so the projectile is still moving sideways at v₀ cos θ. Its speed at the top is the smallest of the flight, but it is zero only for a launch straight up." },
     { id: M("accel-zero-at-top"), skillId: S("projectile-angled"), title: "Thinks a projectile's acceleration is zero at the top of its path", description: "Assumes that because the vertical velocity is zero at the highest point, gravity has stopped acting there or the acceleration has become zero.", remediation: "Gravity acts throughout the flight, so the acceleration is 9.8 m/s² downward at every point, including the top. The vertical velocity passes through zero there on its way from upward to downward; if the acceleration really were zero, the projectile would keep moving horizontally at that height forever." },
+    { id: M("u1.accel-along-motion"), skillId: S("u1.motion-diagrams"), title: "Thinks acceleration always points in the direction of motion", description: "Draws the acceleration arrow on a motion diagram pointing the way the object moves, even when the dots are getting closer together (slowing down).", remediation: "The acceleration arrow points the way the velocity is changing. Compare two successive velocity arrows: if the later one is shorter, the change points backward, against the motion. Speeding up: acceleration along the motion. Slowing down: acceleration against it." },
+    { id: M("u1.spacing-is-position"), skillId: S("u1.motion-diagrams"), title: "Reads dot spacing as position or as acceleration", description: "Takes widely spaced dots to mean the object is far from the origin, or takes equally spaced dots to mean the acceleration is large.", remediation: "Dots are taken at equal time intervals, so the gap between two dots is how far the object moves in one interval: it shows the speed. Equal gaps mean constant velocity (zero acceleration). Gaps that grow or shrink are what show acceleration." },
+    { id: M("u1.graph-shape-copy"), skillId: S("u1.graph-connections"), title: "Copies the shape of one motion graph onto another", description: "Sketches a velocity–time graph that looks like the position–time graph (or an acceleration graph that looks like the velocity graph), instead of plotting its slope.", remediation: "Each graph down the chain is the slope of the one above it. Go through the first graph piece by piece and ask “how steep is it here, and which way does it slope?”, then plot that number. A straight sloping line becomes a flat line; a flat line becomes zero." },
+    { id: M("u1.heavier-falls-faster"), skillId: S("u1.free-fall-concepts"), title: "Believes heavier objects fall faster", description: "Expects a heavier object to have a larger free-fall acceleration, to reach the ground sooner, or to land faster than a lighter one dropped from the same height, with air resistance negligible.", remediation: "With air resistance negligible, every object near Earth's surface falls with the same acceleration, 9.8 m/s² downward, whatever its mass. Dropped together from the same height, a bowling ball and a marble land together. Differences you see in everyday life (a feather, a sheet of paper) come from air resistance, not from mass." },
+    { id: M("u1.free-fall-only-down"), skillId: S("u1.free-fall-concepts"), title: "Thinks free fall only applies to falling objects", description: "Believes an object thrown upward is not in free fall until it starts coming down, or that its acceleration is different (smaller, zero, or upward) while it rises.", remediation: "“Free fall” means gravity is the only thing acting, not “moving downward”. Once a ball leaves the hand it is in free fall on the way up, at the top and on the way down, and its acceleration is 9.8 m/s² downward throughout. On the way up that acceleration slows it; on the way down it speeds it up." },
+    { id: M("u1.g-sign"), skillId: S("u1.free-fall-calculations"), title: "Uses the wrong sign for g", description: "Uses a = +9.8 m/s² while also taking up as positive (or mixes conventions within one problem), so a rising ball speeds up or a dropped ball moves upward.", remediation: "Pick a positive direction first. With up positive, a = −9.8 m/s² for the whole flight, an upward velocity is positive and a downward displacement is negative. Check your answer: a ball thrown up must slow down while it rises." },
+    { id: M("u1.values-not-differences"), skillId: S("u1.motion-data"), title: "Uses table values instead of changes between them", description: "Divides a single position by a single time to get a velocity (or a single velocity by a time to get an acceleration), or judges acceleration from the positions themselves rather than from how the position changes between equal time intervals.", remediation: "Rates come from changes: velocity = (change in position) ÷ (change in time), acceleration = (change in velocity) ÷ (change in time). Make a column of differences between neighbouring rows. Constant first differences in position mean constant velocity; constant first differences in velocity (constant second differences in position) mean constant acceleration." },
+    { id: M("u1.slope-equals-a"), skillId: S("u1.linearization"), title: "Takes the slope of x against t² as the acceleration", description: "Plots position against time squared for motion from rest and reports the slope as the acceleration, forgetting that x = ½at² makes the slope equal to ½a.", remediation: "Match the graph to the equation before reading the slope. For motion from rest, x = (½a)·t², which has the form y = (slope)·(horizontal quantity) with t² on the horizontal axis. So the slope is ½a and the acceleration is twice the slope." },
+    { id: M("u1.linear-scaling"), skillId: S("u1.linearization"), title: "Scales a squared relationship as if it were linear", description: "Assumes that doubling the time doubles the distance fallen from rest, or that doubling the speed doubles the stopping distance, when the relationship involves a square.", remediation: "Write the relationship as a proportion first. Distance from rest grows with t², so doubling t multiplies the distance by 2² = 4. Stopping distance at constant deceleration grows with v₀², so doubling the speed quadruples it. A square root goes the other way: four times the height gives only twice the fall time." },
   ],
 
   units: [
@@ -336,6 +398,7 @@ If the graph is a curve, the velocity is changing. The instantaneous velocity at
           objectives: [
             { id: "physics-1.o.1c", code: "PHYS-1.C", description: "Calculate and interpret acceleration, and determine from the signs of velocity and acceleration whether an object is speeding up or slowing down.", skillIds: [S("acceleration-concept"), S("speeding-slowing")] },
             { id: "physics-1.o.1d", code: "PHYS-1.D", description: "Interpret the height, slope and area of position–time and velocity–time graphs.", skillIds: [S("xt-graphs"), S("vt-graphs")] },
+            { id: "physics-1.o.1i", code: "PHYS-1.E", description: "Represent one motion consistently with a motion diagram and with position–time, velocity–time and acceleration–time graphs, translating between them with slopes and areas.", skillIds: [S("u1.motion-diagrams"), S("u1.graph-connections")] },
           ],
           lessons: [
             {
@@ -501,6 +564,78 @@ The units agree: $(\text{m/s}) \times \text{s} = \text{m}$. Compare the slope: $
                 { type: "summary", points: ["Check the vertical axis before anything else: position or velocity?", "Position–time graph: height is position, slope is velocity. Flat means at rest; a curve means the velocity is changing.", "Velocity–time graph: height is velocity, slope is acceleration, area is displacement.", "Where a velocity–time line crosses the time axis the object reverses; area below the axis is negative displacement.", "High on a position–time graph does not mean fast, and a graph is never a picture of the path."] },
               ],
             },
+            {
+              id: "physics-1.l.u1.motion-diagrams",
+              title: "Motion diagrams and linked graphs",
+              summary: "Show a motion as dots and arrows, then move between position–time, velocity–time and acceleration–time graphs of the same motion using slopes and areas.",
+              estMinutes: 15,
+              skillIds: [S("u1.motion-diagrams"), S("u1.graph-connections")],
+              blocks: [
+                { type: "text", md: r`You now have several ways to show one motion: words, numbers in a table, equations and graphs. This lesson adds one more picture, the **motion diagram**, and then ties all the graphs together so you can start from any one of them and produce the others.
+
+A physicist checks a solution by asking whether every representation tells the same story. If the motion diagram says "slowing down" and the velocity graph moves away from the axis, something is wrong.` },
+                { type: "definition", term: "Motion diagram", md: r`A drawing of an object's position at **equal time intervals**, like the frames of a video laid on top of each other, with one dot per frame. Velocity arrows can be drawn at the dots, and a single acceleration arrow shows which way the velocity is changing.` },
+                { type: "callout", tone: "key", title: "The gaps are the story", md: r`Because the dots are equally spaced in **time**, the gap between two neighbouring dots is how far the object moves in one interval: a big gap means fast, a small gap means slow.
+
+- **Equal gaps**: constant velocity, zero acceleration.
+- **Growing gaps**: speeding up.
+- **Shrinking gaps**: slowing down.
+- **Dots that bunch up and come back**: the object stops for an instant and turns around.
+
+Where a dot sits on the page tells you its *position*. The gaps, and how they change, tell you about *velocity* and *acceleration*.` },
+                { type: "text", md: r`## Velocity arrows and the acceleration arrow
+
+At each dot draw a velocity arrow pointing the way the object moves, with a length that matches the gap there. Then compare two neighbouring velocity arrows: the acceleration points from the earlier arrow's tip toward the later arrow's tip, that is, in the direction of the **change** in velocity.
+
+| Gaps | Velocity arrows | Acceleration arrow |
+|---|---|---|
+| equal | all the same length | none (zero) |
+| growing | getting longer | same direction as the motion |
+| shrinking | getting shorter | opposite to the motion |` },
+                {
+                  type: "worked_example",
+                  title: "A cart rolling up a ramp and back",
+                  problem: r`A cart is given a push up a straight ramp and released. A camera records its position every $0.5\,\text{s}$, with the positive direction up the ramp: $0$, $1.2$, $2.0$, $2.4$, $2.4$, $2.0$, $1.2$ and $0\,\text{m}$. Describe its motion diagram, its velocity arrows and its acceleration arrow, and say what happens between the 4th and 5th dots.`,
+                  steps: [
+                    { title: "Find the gaps", md: r`Going up: $1.2$, $0.8$, $0.4\,\text{m}$. Then $0$ between the two dots at $2.4\,\text{m}$. Coming back: $0.4$, $0.8$, $1.2\,\text{m}$ down the ramp.` },
+                    { title: "Read the motion", md: r`Up the ramp the gaps shrink: the cart slows. Two dots almost on top of each other at $2.4\,\text{m}$: it reaches its highest point and turns around between them. Down the ramp the gaps grow: it speeds up.` },
+                    { title: "Velocity arrows", md: "Going up they point up the ramp and get shorter; coming down they point down the ramp and get longer. Near the turnaround they are very short." },
+                    { title: "Acceleration arrow", md: r`On the way up the velocity is shrinking, so the change points down the ramp. On the way down the velocity grows in the down-ramp direction, so the change again points down the ramp. One acceleration arrow, **down the ramp**, fits the whole trip, including the turnaround. The gaps change by $0.4\,\text{m}$ every interval, so the acceleration is constant.` },
+                  ],
+                  answer: "Slowing on the way up, turning around at 2.4 m, speeding up on the way down; acceleration down the ramp throughout.",
+                },
+                { type: "callout", tone: "warning", title: "The acceleration arrow is not the direction of motion", md: r`It is tempting to point the acceleration arrow the way the object moves. That is only right when the object is speeding up. A car braking as it drives east has its acceleration pointing **west**. Decide from the velocity arrows: is the later arrow longer or shorter than the earlier one?` },
+                { type: "check", questionId: Q("u1.check-md-1"), lead: "Shrinking gaps: which way is the acceleration?" },
+                { type: "check", questionId: Q("u1.check-md-2") },
+                { type: "text", md: r`## One motion, three graphs
+
+Each graph in the chain is the **slope** of the one above it, and each graph's **area** gives the change in the one above it:
+
+| Start from | Its slope gives | Its area gives |
+|---|---|---|
+| position–time graph | velocity | (not used) |
+| velocity–time graph | acceleration | displacement $\Delta x$ |
+| acceleration–time graph | (not used) | change in velocity $\Delta v$ |
+
+So to go **down** the chain (position → velocity → acceleration), measure slopes. To go **up** (acceleration → velocity → position), add up areas and start from a known value.` },
+                { type: "formula", latex: r`\Delta v = \text{area under the } a\text{–}t \text{ graph} \qquad \Delta x = \text{area under the } v\text{–}t \text{ graph}`, caption: "Areas below the time axis count as negative." },
+                {
+                  type: "worked_example",
+                  title: "From a velocity graph to the other two",
+                  problem: r`A lift (up positive) starts from rest at the ground floor. Its velocity–time graph rises in a straight line to $2\,\text{m/s}$ at $t = 2\,\text{s}$, stays at $2\,\text{m/s}$ until $t = 8\,\text{s}$, then falls in a straight line to $0$ at $t = 10\,\text{s}$. Describe its acceleration–time and position–time graphs.`,
+                  steps: [
+                    { title: "Slopes give the acceleration graph", md: r`$0$ to $2\,\text{s}$: slope $\dfrac{2}{2} = +1\,\text{m/s}^2$. $2$ to $8\,\text{s}$: slope $0$. $8$ to $10\,\text{s}$: slope $\dfrac{-2}{2} = -1\,\text{m/s}^2$. The acceleration–time graph is three flat steps: $+1$, $0$, $-1\,\text{m/s}^2$.` },
+                    { title: "Areas give the positions", md: r`$0$–$2\,\text{s}$: triangle $\tfrac12(2)(2) = 2\,\text{m}$. $2$–$8\,\text{s}$: rectangle $(6)(2) = 12\,\text{m}$. $8$–$10\,\text{s}$: triangle $2\,\text{m}$. The lift ends $16\,\text{m}$ up.` },
+                    { title: "Shape of the position graph", md: r`It starts flat and curves upward (speeding up) to $x = 2\,\text{m}$ at $2\,\text{s}$, rises in a straight line to $14\,\text{m}$ at $8\,\text{s}$ (constant velocity), then curves over and levels off at $16\,\text{m}$ (slowing to a stop).` },
+                  ],
+                  answer: r`$a$–$t$: steps of $+1$, $0$, $-1\,\text{m/s}^2$; $x$–$t$: curve up, straight line, curve over, ending at $16\,\text{m}$`,
+                },
+                { type: "callout", tone: "warning", title: "Don't copy the shape", md: r`A rising straight line on a position graph does **not** become a rising line on the velocity graph: its slope is constant, so the velocity graph is **flat**. Work through the first graph one piece at a time and ask "how steep is it here, and which way?" Plot that number, not the height.` },
+                { type: "check", questionId: Q("u1.check-gc-1"), lead: "Slope, not shape." },
+                { type: "check", questionId: Q("u1.check-gc-2"), lead: "Now go up the chain with an area." },
+                { type: "summary", points: ["A motion diagram shows positions at equal time intervals; the gaps show speed and how they change shows acceleration.", "Equal gaps: constant velocity. Growing gaps: speeding up. Shrinking gaps: slowing down.", "The acceleration arrow points the way the velocity is changing: along the motion when speeding up, against it when slowing down.", "Down the chain x → v → a, take slopes; up the chain a → v → x, add areas to a known starting value.", "Area under an acceleration–time graph is the change in velocity; area under a velocity–time graph is the displacement."] },
+              ],
+            },
           ],
         },
         {
@@ -508,7 +643,7 @@ The units agree: $(\text{m/s}) \times \text{s} = \text{m}$. Compare the slope: $
           title: "Constant-acceleration motion",
           description: "Three equations that predict position and velocity whenever the acceleration is constant, including free fall.",
           objectives: [
-            { id: "physics-1.o.1e", code: "PHYS-1.E", description: "Select and apply the constant-acceleration equations to predict position, velocity and time for motion along a line, including free fall.", skillIds: [S("kinematic-equations")] },
+            { id: "physics-1.o.1e", code: "PHYS-1.F", description: "Select and apply the constant-acceleration equations to predict position, velocity and time for motion along a line, including free fall.", skillIds: [S("kinematic-equations")] },
           ],
           lessons: [
             {
@@ -604,11 +739,168 @@ Three things to remember about that instant:
           ],
         },
         {
+          id: "physics-1.u1.t.free-fall",
+          title: "Free fall",
+          description: "Objects moving under gravity alone: the same downward acceleration for every object, at every point of a vertical flight, and the calculations that follow from it.",
+          objectives: [
+            { id: "physics-1.o.1j", code: "PHYS-1.G", description: "Explain free fall as constant downward acceleration independent of mass, and apply the constant-acceleration equations to objects dropped, thrown upward and thrown downward.", skillIds: [S("u1.free-fall-concepts"), S("u1.free-fall-calculations")] },
+          ],
+          lessons: [
+            {
+              id: "physics-1.l.u1.free-fall",
+              title: "Free fall",
+              summary: "What free fall means, why every object falls with the same acceleration, and how to handle drops, upward throws and launches from a height with one sign convention.",
+              estMinutes: 15,
+              skillIds: [S("u1.free-fall-concepts"), S("u1.free-fall-calculations")],
+              blocks: [
+                { type: "text", md: r`You have already used the constant-acceleration equations on a ball thrown straight up. Vertical motion near the ground is so common (dropped phones, divers, rockets after their engines cut out, a basketball at the top of a jump shot) that it deserves its own topic.
+
+Throughout, air resistance is treated as negligible, $g = 9.8\,\text{m/s}^2$, and **up is positive**.` },
+                { type: "definition", term: "Free fall", md: r`Motion in which gravity is the **only** influence on the object. It has nothing to do with the direction of motion: an object is in free fall from the instant it is released until it hits something, whether it is moving up, momentarily at rest at the top, or moving down.` },
+                { type: "callout", tone: "key", title: "One acceleration for everything", md: r`Near Earth's surface every object in free fall has the same acceleration:
+
+$$a = 9.8\,\text{m/s}^2 \text{ downward}$$
+
+It does not depend on the object's mass, its size, or whether it is rising or falling. Each second, every free-falling object's velocity changes by $9.8\,\text{m/s}$ in the downward direction.` },
+                { type: "callout", tone: "warning", title: "Heavier objects do not fall faster", md: r`Drop a full water bottle and an empty one from the same height at the same instant and they land together. Everyday experience seems to disagree (a sheet of paper flutters down slowly), but that is **air resistance**, which matters a lot for light, spread-out objects. Crumple the paper into a tight ball and it falls almost exactly like the bottle. With air resistance negligible, mass makes no difference at all.` },
+                { type: "check", questionId: Q("u1.check-ff-1"), lead: "Predict before you calculate." },
+                { type: "text", md: r`## Up, top and down: the same acceleration
+
+Toss a ball straight up at $14.7\,\text{m/s}$. Every half-second its velocity drops by $4.9\,\text{m/s}$:
+
+| $t$ (s) | 0 | 0.5 | 1.0 | 1.5 | 2.0 | 2.5 | 3.0 |
+|---|---|---|---|---|---|---|---|
+| $v$ (m/s) | $+14.7$ | $+9.8$ | $+4.9$ | $0$ | $-4.9$ | $-9.8$ | $-14.7$ |
+
+The velocity changes at the same steady rate the whole time, so the velocity–time graph is **one straight line** with slope $-9.8\,\text{m/s}^2$. It crosses the time axis at the top ($t = 1.5\,\text{s}$) without bending. The table is also symmetric: the ball passes each height on the way down with the same speed it had there on the way up.` },
+                { type: "callout", tone: "warning", title: "Free fall is not just falling", md: r`While the ball rises it is slowing down, and slowing down while moving up means the acceleration points **down**. So the acceleration is $9.8\,\text{m/s}^2$ downward on the way up, $9.8\,\text{m/s}^2$ downward at the top (where $v = 0$ for an instant), and $9.8\,\text{m/s}^2$ downward on the way down. It never switches off and never points up.` },
+                { type: "check", questionId: Q("u1.check-ff-2") },
+                { type: "text", md: r`## The equations with $a = -g$
+
+With up positive, the constant-acceleration equations become:` },
+                { type: "formula", latex: r`v = v_0 - gt \qquad y = y_0 + v_0t - \tfrac12gt^2 \qquad v^2 = v_0^2 - 2g\,\Delta y`, caption: "Up positive, g = 9.8 m/s² (a positive number). An upward v₀ is positive, a downward one negative; a drop below the start gives a negative Δy." },
+                {
+                  type: "worked_example",
+                  title: "A phone slips off a balcony",
+                  problem: r`A phone slips out of someone's hand on a balcony and reaches the ground $1.5\,\text{s}$ later. Find (a) the height it fell from and (b) its velocity just before it lands.`,
+                  steps: [
+                    { title: "Set up", md: r`Origin at the balcony, up positive. "Slips" means it starts from rest: $v_0 = 0$, $a = -9.8\,\text{m/s}^2$, $t = 1.5\,\text{s}$.` },
+                    { title: "(a) Displacement", md: r`$\Delta y = v_0t - \tfrac12gt^2 = 0 - \tfrac12(9.8)(1.5)^2 = -11.0\,\text{m}$. The minus sign says the phone ended $11.0\,\text{m}$ **below** the balcony, so it fell from about $11\,\text{m}$.` },
+                    { title: "(b) Velocity", md: r`$v = v_0 - gt = 0 - (9.8)(1.5) = -14.7\,\text{m/s}$: $14.7\,\text{m/s}$ downward.` },
+                  ],
+                  answer: r`(a) about $11\,\text{m}$; (b) $14.7\,\text{m/s}$ downward`,
+                },
+                {
+                  type: "worked_example",
+                  title: "Thrown up from a cliff, landing below",
+                  problem: r`A ball is thrown straight up at $8.0\,\text{m/s}$ from the edge of a cliff $20\,\text{m}$ above a beach. It rises, falls past the cliff edge and lands on the beach. Find (a) how long it is in the air and (b) its speed when it lands.`,
+                  steps: [
+                    { title: "Set up", md: r`Origin at the cliff edge, up positive: $v_0 = +8.0\,\text{m/s}$, $a = -9.8\,\text{m/s}^2$, and the beach is at $\Delta y = -20\,\text{m}$. The ball is in free fall the whole time, so one equation covers the rise, the top and the fall.` },
+                    { title: "(a) Position equation gives a quadratic", md: r`$-20 = 8.0t - 4.9t^2$, so $4.9t^2 - 8.0t - 20 = 0$ and $t = \dfrac{8.0 \pm \sqrt{8.0^2 + 4(4.9)(20)}}{2(4.9)} = \dfrac{8.0 \pm 21.4}{9.8}$.` },
+                    { title: "Keep the root that makes sense", md: r`The positive root is $t \approx 3.0\,\text{s}$. The negative root ($\approx -1.4\,\text{s}$) is a time before the throw, so it is rejected.` },
+                    { title: "(b) Landing speed without the time", md: r`$v^2 = v_0^2 - 2g\,\Delta y = 8.0^2 - 2(9.8)(-20) = 64 + 392 = 456$, so $|v| \approx 21.4\,\text{m/s}$ (moving down). Check: $v = 8.0 - 9.8(3.0) \approx -21.4\,\text{m/s}$ ✓` },
+                  ],
+                  answer: r`(a) about $3.0\,\text{s}$; (b) about $21.4\,\text{m/s}$`,
+                },
+                { type: "callout", tone: "tip", title: "Signs are the whole game", md: r`Most free-fall mistakes are sign mistakes. Before calculating, write a list: $v_0 = ?$ (positive if thrown up, negative if thrown down, zero if dropped), $a = -9.8\,\text{m/s}^2$, $\Delta y = ?$ (negative if it ends below the start). Then check the answer makes sense: a ball thrown up must slow down while rising, and it must land moving downward.` },
+                { type: "check", questionId: Q("u1.check-ff-3"), lead: "A drop from rest: remember the ½." },
+                { type: "note_prompt", prompt: "Explain to a friend why a ball thrown upward is in free fall even while it is still rising, and what its acceleration is at the very top.", suggestedTitle: "Free fall", starter: "**Free fall means**: \n**Acceleration on the way up / at the top / on the way down**: \n**Why mass doesn't matter**: \n\nLinks: [[Free fall: reasoning]] [[Constant-acceleration equations]]" },
+                { type: "summary", points: ["Free fall means gravity is the only influence; it covers rising, the top and falling.", r`Every free-falling object accelerates at $9.8\,\text{m/s}^2$ downward, whatever its mass (air resistance negligible).`, r`With up positive, $a = -9.8\,\text{m/s}^2$ for the whole flight; the velocity–time graph is one straight line of slope $-9.8\,\text{m/s}^2$.`, "At the top v = 0 but a is still 9.8 m/s² downward; the flight is symmetric when it lands at its launch height.", "For a launch from a height, use the position equation with a negative Δy, solve the quadratic and keep the positive root."] },
+              ],
+            },
+          ],
+        },
+        {
+          id: "physics-1.u1.t.motion-data",
+          title: "Analyzing motion data",
+          description: "Turning measurements into physics: velocities and accelerations from data tables, testing for constant acceleration, and straightening curved data to read off an acceleration.",
+          objectives: [
+            { id: "physics-1.o.1k", code: "PHYS-1.H", description: "Determine velocity and acceleration from tables of motion data, and linearize data (for example position against time squared) to find an acceleration from a slope and to predict how quantities scale.", skillIds: [S("u1.motion-data"), S("u1.linearization")] },
+          ],
+          lessons: [
+            {
+              id: "physics-1.l.u1.motion-data",
+              title: "Analyzing motion data",
+              summary: "Read velocities and accelerations from tables of measurements, test whether the acceleration is constant, and plot data so it falls on a straight line whose slope tells you the acceleration.",
+              estMinutes: 16,
+              skillIds: [S("u1.motion-data"), S("u1.linearization")],
+              blocks: [
+                { type: "text", md: r`In a lab you rarely get an equation handed to you. You get a **table of measurements** from a motion sensor, a video or a stopwatch, and you have to decide what kind of motion it shows and what the numbers are. On the AP exam, questions about experimental data are common. Two tools do most of the work: **differences** and **straight-line graphs**.` },
+                { type: "text", md: r`## Differences: changes between rows
+
+A cart is released from rest on a ramp, and its position is recorded every $0.5\,\text{s}$ (positive down the ramp):
+
+| $t$ (s) | 0 | 0.5 | 1.0 | 1.5 | 2.0 |
+|---|---|---|---|---|---|
+| $x$ (m) | 0 | 0.10 | 0.40 | 0.90 | 1.60 |
+| change in $x$ (m) | | 0.10 | 0.30 | 0.50 | 0.70 |
+
+The **first differences** (changes in position each interval) are not equal, so the velocity is not constant. Dividing each by $0.5\,\text{s}$ gives the average velocity in each interval: $0.2$, $0.6$, $1.0$ and $1.4\,\text{m/s}$.` },
+                { type: "callout", tone: "key", title: "What the differences tell you", md: r`For equal time intervals:
+
+- **constant first differences** in position: constant velocity;
+- first differences that grow (or shrink) by the **same amount each time**, so constant **second differences**: constant acceleration;
+- starting from rest with constant acceleration, the distances covered in successive equal intervals go in the ratio $1 : 3 : 5 : 7 : \dots$ (the odd numbers). The cart above shows exactly that: $0.10 : 0.30 : 0.50 : 0.70$.` },
+                {
+                  type: "worked_example",
+                  title: "Acceleration from the cart data",
+                  problem: r`Use the cart table above to find the cart's acceleration, and check the result against the position at $t = 2.0\,\text{s}$.`,
+                  steps: [
+                    { title: "Velocities in each interval", md: r`The average velocity over an interval equals the instantaneous velocity at the middle of that interval (for constant acceleration). So $v = 0.2\,\text{m/s}$ at $t = 0.25\,\text{s}$, $0.6\,\text{m/s}$ at $0.75\,\text{s}$, $1.0\,\text{m/s}$ at $1.25\,\text{s}$ and $1.4\,\text{m/s}$ at $1.75\,\text{s}$.` },
+                    { title: "Change in velocity per second", md: r`The velocity rises by $0.4\,\text{m/s}$ every $0.5\,\text{s}$: $a = \dfrac{0.4\,\text{m/s}}{0.5\,\text{s}} = 0.8\,\text{m/s}^2$, the same for every pair, so the acceleration is constant.` },
+                    { title: "Check with an equation", md: r`From rest, $x = \tfrac12at^2 = \tfrac12(0.8)(2.0)^2 = 1.6\,\text{m}$ at $t = 2.0\,\text{s}$, matching the table. ✓` },
+                  ],
+                  answer: r`$a = 0.8\,\text{m/s}^2$`,
+                },
+                { type: "callout", tone: "warning", title: "Use changes, not single values", md: r`Dividing one position by one time (say $1.60\,\text{m} \div 2.0\,\text{s}$) gives the average velocity *since $t = 0$*, not the velocity at $t = 2.0\,\text{s}$. And large positions do not mean large acceleration. Velocity comes from **changes in position**; acceleration comes from **changes in velocity**. Build a column of differences first.` },
+                { type: "check", questionId: Q("u1.check-data-1"), lead: "Change in position over change in time." },
+                { type: "text", md: r`## Linearization: make the data straight
+
+Real measurements scatter a little, and a curve is hard to read accurately by eye. A **straight line** is easy: a best-fit line averages out the scatter, and its slope and intercept can be read directly. So physicists choose what to plot so that the expected relationship becomes a straight line. This is called **linearizing** the data.
+
+For motion from rest with constant acceleration, $x = \tfrac12at^2$. Compare it with the equation of a straight line through the origin, $y = mX$:` },
+                { type: "formula", latex: r`\underbrace{x}_{y} = \underbrace{\left(\tfrac12a\right)}_{\text{slope } m}\,\underbrace{t^2}_{X}`, caption: "Plot x on the vertical axis against t² on the horizontal axis: a straight line through the origin with slope ½a." },
+                { type: "text", md: r`| Situation | Plot | Straight line? | Slope means |
+|---|---|---|---|
+| constant acceleration | $v$ against $t$ | yes | $a$ |
+| from rest, constant acceleration | $x$ against $t^2$ | yes, through origin | $\tfrac12a$ |
+| from rest, constant acceleration | $v^2$ against $\Delta x$ | yes, through origin | $2a$ |
+| dropped from height $h$ | $h$ against $t^2$ | yes, through origin | $\tfrac12g$ |` },
+                {
+                  type: "worked_example",
+                  title: "Finding g from a drop experiment",
+                  problem: r`Students drop a ball from several heights and time each fall with light gates. Their results (heights in m, times in s): $0.50$ m in $0.32$ s, $1.00$ m in $0.45$ s, $1.50$ m in $0.55$ s, $2.00$ m in $0.64$ s. Linearize the data and use it to estimate $g$.`,
+                  steps: [
+                    { title: "Choose the axes", md: r`From rest, $h = \tfrac12gt^2$, so plot $h$ against $t^2$ and expect a straight line through the origin with slope $\tfrac12g$.` },
+                    { title: "Compute t²", md: r`$t^2 \approx 0.102$, $0.203$, $0.303$ and $0.410\,\text{s}^2$. The ratios $h/t^2$ are about $4.9$, $4.9$, $5.0$ and $4.9\,\text{m/s}^2$: the points do lie close to one straight line through the origin.` },
+                    { title: "Read the slope", md: r`A best-fit line through these points has a slope of about $4.9\,\text{m/s}^2$.` },
+                    { title: "Turn the slope into g", md: r`Slope $= \tfrac12g$, so $g \approx 2 \times 4.9 = 9.8\,\text{m/s}^2$.` },
+                  ],
+                  answer: r`$g \approx 9.8\,\text{m/s}^2$ (twice the slope)`,
+                },
+                { type: "callout", tone: "warning", title: "The slope is not always the acceleration", md: r`Always match your graph to its equation before reading the slope. On a $v$–$t$ graph the slope is $a$. On an $x$–$t^2$ graph (from rest) it is $\tfrac12a$, so $a$ is **twice** the slope. On a $v^2$–$\Delta x$ graph it is $2a$, so $a$ is **half** the slope.` },
+                { type: "check", questionId: Q("u1.check-lin-1"), lead: "Which plot makes the data straight?" },
+                { type: "text", md: r`## Proportional reasoning
+
+The same relationships let you predict without a calculator:
+
+- from rest, $x \propto t^2$: **double the time, four times the distance**;
+- stopping from speed $v_0$ with the same braking, $\Delta x \propto v_0^2$: **double the speed, four times the stopping distance**;
+- dropped from height $h$, $t \propto \sqrt{h}$: **four times the height, only twice the time**.` },
+                { type: "callout", tone: "warning", title: "Squares do not scale linearly", md: r`The most common slip is to scale everything in proportion: "twice as fast, so twice the stopping distance". Write the relationship as a proportion first ($\Delta x \propto v_0^2$), then apply the factor to the quantity *inside* the square.` },
+                { type: "check", questionId: Q("u1.check-lin-2"), lead: "Double the speed: what happens to the stopping distance?" },
+                { type: "tutor_prompt", prompts: ["How can I tell from a table whether an object's acceleration is constant?", "Why do we plot position against time squared?", "Why is the acceleration twice the slope of an x–t² graph?"] },
+                { type: "summary", points: ["Velocity comes from changes in position, acceleration from changes in velocity: build a column of differences.", "Equal time steps: constant first differences mean constant velocity; constant second differences mean constant acceleration; 1 : 3 : 5 : 7 spacing means constant acceleration from rest.", "Linearize by choosing axes that make the expected relationship a straight line, e.g. x against t² for motion from rest.", r`Read the slope through the equation: $v$–$t$ slope $= a$; $x$–$t^2$ slope $= \tfrac12a$; $v^2$–$\Delta x$ slope $= 2a$.`, r`Proportional reasoning: $x \propto t^2$, $\Delta x_{\text{stop}} \propto v_0^2$, $t_{\text{fall}} \propto \sqrt{h}$.`] },
+              ],
+            },
+          ],
+        },
+        {
           id: "physics-1.u1.vectors",
           title: "Scalars, vectors and components",
           description: "The language of direction: which quantities are vectors, how to add them by drawing, and how to break them into components for calculation.",
           objectives: [
-            { id: "physics-1.o.1f", code: "PHYS-1.F", description: "Distinguish scalar from vector quantities, add vectors graphically and by components, and find a vector's magnitude and direction from its components.", skillIds: [S("scalars-vectors"), S("vector-components")] },
+            { id: "physics-1.o.1f", code: "PHYS-1.I", description: "Distinguish scalar from vector quantities, add vectors graphically and by components, and find a vector's magnitude and direction from its components.", skillIds: [S("scalars-vectors"), S("vector-components")] },
           ],
           lessons: [
             {
@@ -759,7 +1051,7 @@ Work out the sizes with sine and cosine, then attach the signs from the directio
           title: "Reference frames and relative motion",
           description: "Every velocity is measured relative to something. Combine velocities measured in different frames, along a line and in two dimensions.",
           objectives: [
-            { id: "physics-1.o.1g", code: "PHYS-1.G", description: "Describe motion as observed from different reference frames, and combine relative velocities along a line and, as vectors, in two dimensions.", skillIds: [S("relative-velocity-1d"), S("relative-velocity-2d")] },
+            { id: "physics-1.o.1g", code: "PHYS-1.J", description: "Describe motion as observed from different reference frames, and combine relative velocities along a line and, as vectors, in two dimensions.", skillIds: [S("relative-velocity-1d"), S("relative-velocity-2d")] },
           ],
           lessons: [
             {
@@ -858,7 +1150,7 @@ Pilots do the same in a crosswind: they point the aircraft (its **heading**) par
           title: "Motion in two dimensions: projectiles",
           description: "Objects moving through the air under gravity alone. Split the motion into a constant-velocity horizontal part and a free-fall vertical part that share the same clock.",
           objectives: [
-            { id: "physics-1.o.1h", code: "PHYS-1.H", description: "Analyse projectile motion by treating horizontal and vertical motion independently, for horizontal and angled launches, to determine time of flight, maximum height, range and velocity.", skillIds: [S("projectile-horizontal"), S("projectile-angled")] },
+            { id: "physics-1.o.1h", code: "PHYS-1.K", description: "Analyse projectile motion by treating horizontal and vertical motion independently, for horizontal and angled launches, to determine time of flight, maximum height, range and velocity.", skillIds: [S("projectile-horizontal"), S("projectile-angled")] },
           ],
           lessons: [
             {
@@ -981,69 +1273,125 @@ For a fixed launch speed over level ground:
 
   questions: physicsQuestions,
 
+  // Guided path per topic: lessons, then that topic's exercises and topic quiz. Quiz 1 closes the
+  // one-dimensional half (after "Analyzing motion data"), Quiz 2 closes the unit (after projectiles),
+  // and the unit test (no topicId) comes last. The ids of the original quizzes, test and exam sets are
+  // live in databases and the demo seed: never rename them.
   assessments: [
+    // ── Position, displacement and velocity ──
+    EX("displacement-distance", "physics-1.u1.position-velocity", "Find displacement and distance", "Signed displacements, total distance and multi-leg trips, from descriptions, number lines and tables."),
+    EX("average-velocity", "physics-1.u1.position-velocity", "Calculate average velocity and speed", "Total over total: average velocity from displacement, average speed from distance, and what the sign of a velocity means."),
     {
       id: "physics-1.quiz.motion-basics",
       kind: "skill_quiz",
-      title: "Quiz: position, displacement and velocity",
+      title: "Topic quiz: position, displacement and velocity",
       description: "Six questions on position and displacement, distance travelled, and average and instantaneous velocity. No hints.",
       unitId: "physics-1.u1",
       topicId: "physics-1.u1.position-velocity",
       questionIds: [Q("pd-2"), Q("dd-2"), Q("dd-3"), Q("avs-2"), Q("avs-3"), Q("vsd-2")],
       config: { feedback: "after_submit", assistance: "disabled" },
     },
+    // ── Acceleration and motion graphs ──
+    EX("acceleration-signs", "physics-1.u1.acceleration-graphs", "Calculate acceleration and read its sign", "Acceleration from changes in velocity, with signs and units, and deciding from the signs of v and a whether an object speeds up or slows down."),
+    EX("motion-diagrams", "physics-1.u1.acceleration-graphs", "Draw and read motion diagrams", "Dot spacing, velocity arrows and the direction of the acceleration arrow, including turnarounds."),
+    EX("velocity-graph-displacement", "physics-1.u1.acceleration-graphs", "Find displacement from velocity graphs", "Areas of rectangles, triangles and trapezoids under velocity–time graphs, area below the axis, and displacement versus distance."),
+    EX("connect-graphs", "physics-1.u1.acceleration-graphs", "Connect position, velocity and acceleration graphs", "Slopes going down the chain, areas going up it, and picking out graphs that describe the same motion."),
     {
       id: "physics-1.quiz.acceleration-graphs",
       kind: "lesson_quiz",
-      title: "Quiz: acceleration and motion graphs",
+      title: "Topic quiz: acceleration and motion graphs",
       description: "Six questions on acceleration, speeding up versus slowing down, and reading position–time and velocity–time graphs. No hints.",
       unitId: "physics-1.u1",
       topicId: "physics-1.u1.acceleration-graphs",
       questionIds: [Q("ac-3"), Q("ss-2"), Q("ss-3"), Q("xt-3"), Q("vt-3"), Q("vt-4")],
       config: { feedback: "after_submit", assistance: "disabled" },
     },
+    // ── Constant-acceleration motion ──
+    EX("choose-equation", "physics-1.u1.constant-acceleration", "Choose the right constant-acceleration equation", "List the knowns with signs, name the unknown and pick the equation that leaves out the rest."),
+    EX("constant-acceleration-calc", "physics-1.u1.constant-acceleration", "Solve constant-acceleration problems", "Velocities, displacements, times and stopping distances for motion with constant acceleration."),
+    EX("multi-stage", "physics-1.u1.constant-acceleration", "Solve multi-stage and turnaround problems", "Motion in stages, turnaround times and positions, catching up, and distance through a turnaround."),
+    // ── Free fall ──
+    EX("free-fall-reasoning", "physics-1.u1.t.free-fall", "Reason about free fall", "Same acceleration for every mass, acceleration on the way up, at the top and down, symmetry, and the velocity–time graph of a throw."),
+    EX("free-fall-calc", "physics-1.u1.t.free-fall", "Calculate free-fall motion", "Drops, upward and downward throws, maximum heights and launches from a height, with up positive."),
+    // ── Analyzing motion data ──
+    EX("data-tables", "physics-1.u1.t.motion-data", "Read motion data tables", "Velocities and accelerations from tables of measurements, and testing for constant velocity or constant acceleration."),
+    EX("linearize", "physics-1.u1.t.motion-data", "Linearize data to find acceleration", "Choose axes that make the data straight, turn slopes into accelerations, and predict how quantities scale."),
     {
-      id: "physics-1.test.u1-kinematics",
-      kind: "unit_test",
-      title: "Unit 1 test: kinematics",
-      description: "Sixteen questions, 40 minutes. Covers the whole unit: motion along a line and its graphs, constant acceleration, vectors and components, relative motion, and projectile motion.",
+      id: "physics-1.quiz.u1.1",
+      kind: "skill_quiz",
+      title: "Quiz 1: motion along a line",
+      description: "Eight questions covering the first half of the unit: velocity, acceleration, motion diagrams and graphs, constant acceleration, free fall and motion data. 12 minutes, no hints.",
       unitId: "physics-1.u1",
-      questionIds: [
-        Q("pd-3"), Q("dd-4"), Q("avs-4"), Q("vsd-3"), Q("ac-4"), Q("ss-4"), Q("xt-4"), Q("vt-5"), Q("ke-3"), Q("ke-4"),
-        Q("sv-5"), Q("vc-6"), Q("rv-6"), Q("rv2-6"), Q("ph-6"), Q("pa-6"),
-      ],
-      config: { feedback: "after_submit", assistance: "disabled", timeLimitSeconds: 40 * 60 },
+      topicId: "physics-1.u1.t.motion-data",
+      questionIds: [Q("u1.quiz1-1"), Q("u1.quiz1-2"), Q("u1.quiz1-3"), Q("u1.quiz1-4"), Q("u1.quiz1-5"), Q("u1.quiz1-6"), Q("u1.quiz1-7"), Q("u1.quiz1-8")],
+      config: { feedback: "after_submit", assistance: "disabled", timeLimitSeconds: 12 * 60 },
     },
+    // ── Scalars, vectors and components ──
+    EX("vector-addition", "physics-1.u1.vectors", "Classify and add vectors", "Scalar or vector, sums along a line and at right angles, the possible sizes of a resultant, and changes in a vector."),
+    EX("resolve-components", "physics-1.u1.vectors", "Resolve vectors into components", "Sine or cosine from a sketch, angles measured from either axis, and signs of components in every quadrant."),
+    EX("add-components", "physics-1.u1.vectors", "Add vectors by components", "Add two or three vectors by components, then find the magnitude and direction of the resultant."),
     {
       id: "physics-1.quiz.vectors",
       kind: "skill_quiz",
-      title: "Quiz: scalars, vectors and components",
+      title: "Topic quiz: scalars, vectors and components",
       description: "Six questions on scalars and vectors, adding vectors, and working with components. No hints.",
       unitId: "physics-1.u1",
       topicId: "physics-1.u1.vectors",
       questionIds: [Q("sv-3"), Q("sv-4"), Q("sv-7"), Q("vc-3"), Q("vc-4"), Q("vc-5")],
       config: { feedback: "after_submit", assistance: "disabled" },
     },
+    // ── Reference frames and relative motion ──
+    EX("relative-1d", "physics-1.u1.relative-motion", "Find relative velocity along a line", "Walkways, trains, overtaking and head-on approaches: combine velocities with signs and find meeting times."),
+    EX("boats-planes", "physics-1.u1.relative-motion", "Boats in currents and planes in wind", "Add perpendicular relative velocities: crossing times, drift, aiming upstream and flying into a crosswind."),
     {
       id: "physics-1.quiz.relative-motion",
       kind: "skill_quiz",
-      title: "Quiz: reference frames and relative motion",
+      title: "Topic quiz: reference frames and relative motion",
       description: "Six questions on relative velocity along a line and in two dimensions. No hints.",
       unitId: "physics-1.u1",
       topicId: "physics-1.u1.relative-motion",
       questionIds: [Q("rv-3"), Q("rv-4"), Q("rv-5"), Q("rv2-3"), Q("rv2-4"), Q("rv2-5")],
       config: { feedback: "after_submit", assistance: "disabled" },
     },
+    // ── Motion in two dimensions: projectiles ──
+    EX("horizontal-launch", "physics-1.u1.projectile-motion", "Solve horizontal-launch problems", "Time from the height, distance from the launch speed, and landing velocity, for objects launched horizontally."),
+    EX("angled-launch", "physics-1.u1.projectile-motion", "Find angled-launch quantities", "Resolve the launch velocity, then find the time to the top, maximum height, time of flight and range."),
+    EX("projectile-graphs", "physics-1.u1.projectile-motion", "Read projectile components and graphs", "Which of x, y, vx, vy and the accelerations change during a flight, and how their graphs and tables look."),
     {
       id: "physics-1.quiz.projectiles",
       kind: "lesson_quiz",
-      title: "Quiz: projectile motion",
+      title: "Topic quiz: projectile motion",
       description: "Six questions on horizontal and angled launches. No hints.",
       unitId: "physics-1.u1",
       topicId: "physics-1.u1.projectile-motion",
       questionIds: [Q("ph-3"), Q("ph-4"), Q("ph-5"), Q("pa-3"), Q("pa-4"), Q("pa-5")],
       config: { feedback: "after_submit", assistance: "disabled" },
     },
+    {
+      id: "physics-1.quiz.u1.2",
+      kind: "skill_quiz",
+      title: "Quiz 2: vectors, relative motion and projectiles",
+      description: "Seven questions covering the second half of the unit: vectors and components, relative velocity and projectile motion. 11 minutes, no hints.",
+      unitId: "physics-1.u1",
+      topicId: "physics-1.u1.projectile-motion",
+      questionIds: [Q("u1.quiz2-1"), Q("u1.quiz2-2"), Q("u1.quiz2-3"), Q("u1.quiz2-4"), Q("u1.quiz2-5"), Q("u1.quiz2-6"), Q("u1.quiz2-7")],
+      config: { feedback: "after_submit", assistance: "disabled", timeLimitSeconds: 11 * 60 },
+    },
+    // ── Unit level ──
+    {
+      id: "physics-1.test.u1-kinematics",
+      kind: "unit_test",
+      title: "Unit 1 test: kinematics",
+      description: "Nineteen questions, 45 minutes. Covers the whole unit: motion along a line, motion diagrams and graphs, constant acceleration and free fall, motion data, vectors and components, relative motion, and projectile motion.",
+      unitId: "physics-1.u1",
+      questionIds: [
+        Q("pd-3"), Q("dd-4"), Q("avs-4"), Q("vsd-3"), Q("ac-4"), Q("ss-4"), Q("xt-4"), Q("vt-5"), Q("ke-3"), Q("ke-4"),
+        Q("sv-5"), Q("vc-6"), Q("rv-6"), Q("rv2-6"), Q("ph-6"), Q("pa-6"),
+        Q("u1.test-1"), Q("u1.test-2"), Q("u1.test-3"),
+      ],
+      config: { feedback: "after_submit", assistance: "disabled", timeLimitSeconds: 45 * 60 },
+    },
+    // ── Full-course practice (no unitId) ──
     {
       id: "physics-1.exam.set-1",
       kind: "exam_practice",
@@ -1078,4 +1426,4 @@ For a fixed launch speed over level ground:
       accessibilityAlternative: "Every value shown on the track and graphs (time, position, velocity, displacement and distance travelled) is also given as a text readout and in the equation table, which update as the time changes; the time scrubber and the parameter sliders are keyboard-operable.",
     },
   ],
-});
+};

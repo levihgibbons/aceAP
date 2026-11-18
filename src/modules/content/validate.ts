@@ -278,6 +278,15 @@ export function validateCourseContent(input: CourseContentInput, options: { minQ
     if (a.topicId && !topicIds.has(a.topicId)) err(a.id, `unknown topic "${a.topicId}"`);
     if (new Set(a.questionIds).size !== a.questionIds.length) err(a.id, "question listed twice");
     for (const q of a.questionIds) if (!questionIds.has(q)) err(a.id, `unknown question "${q}"`);
+    const per = a.config.questionsPerAttempt;
+    if (per !== undefined && a.kind !== "exercise") err(a.id, "questionsPerAttempt is only for exercises");
+    if (a.kind === "exercise") {
+      if (!a.topicId) err(a.id, "an exercise must belong to a topic (topicId)");
+      if (a.config.feedback !== "immediate") err(a.id, "an exercise must give immediate feedback");
+      if (a.config.timeLimitSeconds) err(a.id, "an exercise must be untimed");
+      if (per === undefined) err(a.id, "an exercise needs questionsPerAttempt");
+      else if (a.questionIds.length < per + 2) err(a.id, `an exercise pool needs at least ${per + 2} questions so a retake can differ (has ${a.questionIds.length})`);
+    }
   }
   for (const s of c.simulations) for (const k of s.skillIds) if (!skillIds.has(k)) err(s.id, `unknown skill "${k}"`);
 

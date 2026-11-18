@@ -73,6 +73,7 @@ export default async function LessonPage({ params }: Props) {
   const nextId = order.slice(order.indexOf(lessonId) + 1).find((id) => tree.lessons.get(id)?.publishedVersion);
   const nextLesson = nextId ? tree.lessons.get(nextId)! : null;
   const quiz =
+    tree.assessments.find((a) => a.topicId === lesson.topicId && a.kind === "exercise") ??
     tree.assessments.find((a) => a.topicId === lesson.topicId && (a.kind === "lesson_quiz" || a.kind === "skill_quiz")) ??
     tree.assessments.find((a) => (a.kind === "lesson_quiz" || a.kind === "skill_quiz") && a.skillIds.some((s) => taughtIds.has(s))) ??
     null;

@@ -639,7 +639,7 @@ async function loadOwnNoteDocs(actor: Actor): Promise<IndexedDoc[]> {
       .orderBy(desc(t.vaultNotes.updatedAt))
       .limit(MAX_NOTES_SCANNED),
   );
-  return rows.map((n) => makeDoc({ group: "notes", id: n.id, title: n.title, href: `/app/vault?note=${n.id}` }, { title: n.title, keywords: n.tags.join(". "), body: n.body, context: n.folder }, n.body));
+  return rows.map((n) => makeDoc({ group: "notes", id: n.id, title: n.title, href: `/app/vault/notes?note=${n.id}` }, { title: n.title, keywords: n.tags.join(". "), body: n.body, context: n.folder }, n.body));
 }
 
 // ──────────────────────────────────── API ───────────────────────────────────
