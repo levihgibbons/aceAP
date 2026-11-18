@@ -1,26 +1,356 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * AceAP design tokens. Components use the semantic Tailwind colours below
+ * (bg-canvas, bg-surface, text-ink, text-muted, border-line, bg-accent …) and
+ * never raw palette values, so light and dark themes stay in lockstep.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #f6f5f1;
+  --surface: #ffffff;
+  --surface-2: #faf9f6;
+  --sunken: #efede7;
+  --line: #e4e1d8;
+  --line-strong: #cfcbbf;
+  --ink: #1c1b18;
+  --ink-2: #44423c;
+  /* muted/faint meet 4.5:1 as small text on every light surface (WCAG 1.4.3). */
+  --muted: #64615a;
+  --faint: #6f6b60;
+
+  --accent: #2f4fd0;
+  --accent-hover: #2541b4;
+  --accent-soft: #e9edfc;
+  --accent-ink: #1e3391;
+  --on-accent: #ffffff;
+
+  --good: #177245;
+  --good-soft: #e3f3ea;
+  --warn: #9c5907;
+  --warn-soft: #fbefd9;
+  --bad: #b3261e;
+  --bad-soft: #fbe9e7;
+  --info: #1f5f8b;
+  --info-soft: #e4f0f8;
+
+  /* Mastery scale — always paired with an icon/shape and a text label. */
+  --m-none: #b9b5a9;
+  --m-none-soft: #f1efe9;
+  --m-developing: #b7791f;
+  --m-developing-soft: #fbf0db;
+  --m-approaching: #2b6cb0;
+  --m-approaching-soft: #e3eefa;
+  --m-proficient: #2f855a;
+  --m-proficient-soft: #e2f3ea;
+  --m-mastered: #5b3fb8;
+  --m-mastered-soft: #ece7fa;
+  --m-review: #bd3f0c;
+  --m-review-soft: #fdeadf;
+
+  /* Chart series */
+  --chart-1: #2f4fd0;
+  --chart-2: #c2410c;
+  --chart-3: #177245;
+  --chart-4: #7b3fb8;
+  --chart-5: #b7791f;
+  --chart-grid: #e4e1d8;
+
+  --shadow-sm: 0 1px 2px rgb(28 27 24 / 0.05);
+  --shadow-md: 0 1px 2px rgb(28 27 24 / 0.04), 0 6px 18px -8px rgb(28 27 24 / 0.14);
+  --shadow-lg: 0 2px 4px rgb(28 27 24 / 0.05), 0 22px 48px -20px rgb(28 27 24 / 0.28);
+  /* Modal backdrop */
+  --scrim: rgb(28 27 24 / 0.38);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --canvas: #121315;
+  --surface: #1a1b1e;
+  --surface-2: #1f2024;
+  --sunken: #0e0f11;
+  --line: #2b2d32;
+  --line-strong: #3d4047;
+  --ink: #edecea;
+  --ink-2: #cfcdc8;
+  --muted: #a9a69f;
+  --faint: #928f89;
+
+  --accent: #8aa2ff;
+  --accent-hover: #a3b6ff;
+  --accent-soft: #1f2748;
+  --accent-ink: #c3cfff;
+  --on-accent: #0f1430;
+
+  --good: #5fcf96;
+  --good-soft: #14301f;
+  --warn: #f0b44c;
+  --warn-soft: #33260c;
+  --bad: #ff8a80;
+  --bad-soft: #3a1512;
+  --info: #7cc0ec;
+  --info-soft: #11293a;
+
+  --m-none: #5b5d63;
+  --m-none-soft: #222327;
+  --m-developing: #e6ac4f;
+  --m-developing-soft: #33270f;
+  --m-approaching: #74b0ee;
+  --m-approaching-soft: #13283f;
+  --m-proficient: #62c794;
+  --m-proficient-soft: #143021;
+  --m-mastered: #a995f5;
+  --m-mastered-soft: #261f48;
+  --m-review: #fb9460;
+  --m-review-soft: #3a1c0e;
+
+  --chart-1: #8aa2ff;
+  --chart-2: #fb9460;
+  --chart-3: #62c794;
+  --chart-4: #c59bf2;
+  --chart-5: #e6ac4f;
+  --chart-grid: #2b2d32;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 22px -10px rgb(0 0 0 / 0.7);
+  --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.4), 0 24px 52px -20px rgb(0 0 0 / 0.85);
+  --scrim: rgb(0 0 0 / 0.6);
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-code), ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-sunken: var(--sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-on-accent: var(--on-accent);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-m-none: var(--m-none);
+  --color-m-none-soft: var(--m-none-soft);
+  --color-m-developing: var(--m-developing);
+  --color-m-developing-soft: var(--m-developing-soft);
+  --color-m-approaching: var(--m-approaching);
+  --color-m-approaching-soft: var(--m-approaching-soft);
+  --color-m-proficient: var(--m-proficient);
+  --color-m-proficient-soft: var(--m-proficient-soft);
+  --color-m-mastered: var(--m-mastered);
+  --color-m-mastered-soft: var(--m-mastered-soft);
+  --color-m-review: var(--m-review);
+  --color-m-review-soft: var(--m-review-soft);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-grid: var(--chart-grid);
+  --color-scrim: var(--scrim);
+
+  --shadow-card: var(--shadow-sm);
+  --shadow-raised: var(--shadow-md);
+  --shadow-overlay: var(--shadow-lg);
+
+  --radius-card: 0.875rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--canvas);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Long-form lesson typography ─────────────────────────────────────────── */
+.prose-lesson {
+  color: var(--ink-2);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+}
+.prose-lesson > * + * {
+  margin-top: 1em;
+}
+.prose-lesson h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-top: 2em;
+}
+.prose-lesson h3 {
+  font-family: var(--font-display);
+  font-size: 1.175rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 1.6em;
+}
+.prose-lesson strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.prose-lesson a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose-lesson ul,
+.prose-lesson ol {
+  padding-left: 1.35em;
+}
+.prose-lesson ul {
+  list-style: disc;
+}
+.prose-lesson ol {
+  list-style: decimal;
+}
+.prose-lesson li + li {
+  margin-top: 0.35em;
+}
+.prose-lesson li::marker {
+  color: var(--faint);
+}
+.prose-lesson code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--sunken);
+  border-radius: 0.3rem;
+  padding: 0.1em 0.35em;
+}
+.prose-lesson blockquote {
+  border-left: 3px solid var(--line-strong);
+  padding-left: 1em;
+  color: var(--muted);
+}
+.prose-lesson table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+.prose-lesson th,
+.prose-lesson td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+.prose-lesson th {
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface-2);
+}
+.prose-lesson .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.35em 0;
+}
+.prose-compact {
+  font-size: 0.975rem;
+  line-height: 1.6;
+}
+.prose-compact > * + * {
+  margin-top: 0.6em;
+}
+
+/* Range inputs used by simulations */
+input[type="range"].sim-range {
+  accent-color: var(--accent);
+  width: 100%;
+  height: 1.5rem;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-rise {
+  animation: rise-in 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* ── Shell & overlays (owned by the UI foundation) ───────────────────────── */
+/* Lock page scroll while a modal <dialog> is open. */
+html:has(dialog[open]:modal) {
+  overflow: hidden;
+}
+
+@keyframes drawer-up {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes drawer-left {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.animate-drawer {
+  animation: drawer-up 0.24s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@media (min-width: 40rem) {
+  .animate-drawer {
+    animation-name: drawer-left;
+  }
 }

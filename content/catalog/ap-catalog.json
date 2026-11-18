@@ -1,0 +1,1506 @@
+{
+  "schemaVersion": 1,
+  "verifiedOn": "2026-11-17",
+  "indexSourceUrl": "https://apcentral.collegeboard.org/courses",
+  "notes": "Course list read from the AP Central course index on 2026-11-17; unit titles read from each course's AP Central page (cross-checked against the raw page HTML), except AP English Literature and Composition and AP Cybersecurity (per-unit titles from their AP Students pages) and AP Networking (2026-27 pilot course framework PDF on AP Central). Courses with an empty units array were verified to have no titled units: the three Art and Design portfolio courses, AP Seminar and AP Research are organized by big ideas, and AP English Language and Composition has nine numbered but untitled units; AP Physics 2 and AP Physics C: Electricity and Magnetism use the official unit numbers 9-15 and 8-13, and AP Business with Personal Finance splits Unit 3 into two parts.",
+  "courses": [
+    {
+      "id": "2d-art-and-design",
+      "name": "AP 2-D Art and Design",
+      "category": "arts",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-2-d-art-and-design",
+      "description": "A portfolio course in which students investigate ideas and materials to create and present a sustained body of two-dimensional artwork.",
+      "outlineVerified": true,
+      "units": []
+    },
+    {
+      "id": "3d-art-and-design",
+      "name": "AP 3-D Art and Design",
+      "category": "arts",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-3-d-art-and-design",
+      "description": "A portfolio course in which students investigate ideas and materials to create and present a sustained body of three-dimensional artwork.",
+      "outlineVerified": true,
+      "units": []
+    },
+    {
+      "id": "art-history",
+      "name": "AP Art History",
+      "category": "arts",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-art-history",
+      "description": "A survey of art across world cultures from prehistory to today, with practice in visual and contextual analysis of works.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Global Prehistory, 30,000–500 BCE"
+        },
+        {
+          "number": 2,
+          "title": "Ancient Mediterranean, 3500 BCE–300 CE"
+        },
+        {
+          "number": 3,
+          "title": "Early Europe and Colonial Americas, 200–1750 CE"
+        },
+        {
+          "number": 4,
+          "title": "Later Europe and Americas, 1750–1980 CE"
+        },
+        {
+          "number": 5,
+          "title": "Indigenous Americas, 1000 BCE–1980 CE"
+        },
+        {
+          "number": 6,
+          "title": "Africa, 1100–1980 CE"
+        },
+        {
+          "number": 7,
+          "title": "West and Central Asia, 500 BCE–1980 CE"
+        },
+        {
+          "number": 8,
+          "title": "South, East, and Southeast Asia, 300 BCE–1980 CE"
+        },
+        {
+          "number": 9,
+          "title": "The Pacific, 700-1980 C.E."
+        },
+        {
+          "number": 10,
+          "title": "Global Contemporary, 1980 C.E. to Present"
+        }
+      ]
+    },
+    {
+      "id": "drawing",
+      "name": "AP Drawing",
+      "category": "arts",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-drawing",
+      "description": "A portfolio course in which students build drawing skills such as mark-making, line, and composition while developing a sustained body of work.",
+      "outlineVerified": true,
+      "units": []
+    },
+    {
+      "id": "music-theory",
+      "name": "AP Music Theory",
+      "category": "arts",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-music-theory",
+      "description": "Covers the building blocks of music, including pitch, rhythm, scales, chords, harmony, voice leading, and form, through listening, analysis, and notation.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Music Fundamentals I: Pitch, Major Scales and Key Signatures, Rhythm, Meter, and Expressive Elements"
+        },
+        {
+          "number": 2,
+          "title": "Music Fundamentals II: Minor Scales and Key Signatures, Melody, Timbre, and Texture"
+        },
+        {
+          "number": 3,
+          "title": "Music Fundamentals III: Triads and Seventh Chords"
+        },
+        {
+          "number": 4,
+          "title": "Harmony and Voice Leading I: Chord Function, Cadence, and Phrase"
+        },
+        {
+          "number": 5,
+          "title": "Harmony and Voice Leading II: Chord Progressions and Predominant Function"
+        },
+        {
+          "number": 6,
+          "title": "Harmony and Voice Leading III: Embellishments, Motives, and Melodic Devices"
+        },
+        {
+          "number": 7,
+          "title": "Harmony and Voice Leading IV: Secondary Function"
+        },
+        {
+          "number": 8,
+          "title": "Modes and Form"
+        }
+      ]
+    },
+    {
+      "id": "english-language-and-composition",
+      "name": "AP English Language and Composition",
+      "category": "english",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-english-language-and-composition",
+      "description": "Focuses on rhetoric: reading nonfiction closely, analyzing how writers persuade, and writing evidence-based arguments.",
+      "outlineVerified": true,
+      "units": []
+    },
+    {
+      "id": "english-literature-and-composition",
+      "name": "AP English Literature and Composition",
+      "category": "english",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-english-literature-and-composition",
+      "description": "Focuses on close reading and written interpretation of short fiction, poetry, novels, and drama.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Short Fiction I"
+        },
+        {
+          "number": 2,
+          "title": "Poetry I"
+        },
+        {
+          "number": 3,
+          "title": "Longer Fiction or Drama I"
+        },
+        {
+          "number": 4,
+          "title": "Short Fiction II"
+        },
+        {
+          "number": 5,
+          "title": "Poetry II"
+        },
+        {
+          "number": 6,
+          "title": "Longer Fiction or Drama II"
+        },
+        {
+          "number": 7,
+          "title": "Short Fiction III"
+        },
+        {
+          "number": 8,
+          "title": "Poetry III"
+        },
+        {
+          "number": 9,
+          "title": "Longer Fiction or Drama III"
+        }
+      ]
+    },
+    {
+      "id": "african-american-studies",
+      "name": "AP African American Studies",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-african-american-studies",
+      "description": "An interdisciplinary study of African American history, culture, and thought, from early African societies through the present day.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Origins of the African Diaspora (~900 BCE–16th century)"
+        },
+        {
+          "number": 2,
+          "title": "Freedom, Enslavement, and Resistance (16th century–1865)"
+        },
+        {
+          "number": 3,
+          "title": "The Practice of Freedom (1865–1940s)"
+        },
+        {
+          "number": 4,
+          "title": "Movements and Debates (1940s–2000s)"
+        }
+      ]
+    },
+    {
+      "id": "comparative-government-and-politics",
+      "name": "AP Comparative Government and Politics",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-comparative-government-and-politics",
+      "description": "Compares the political systems, institutions, and policies of six countries: China, Iran, Mexico, Nigeria, Russia, and the United Kingdom.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Political Systems, Regimes, and Governments"
+        },
+        {
+          "number": 2,
+          "title": "Political Institutions"
+        },
+        {
+          "number": 3,
+          "title": "Political Culture and Participation"
+        },
+        {
+          "number": 4,
+          "title": "Party and Electoral Systems and Citizen Organizations"
+        },
+        {
+          "number": 5,
+          "title": "Political and Economic Changes and Development"
+        }
+      ]
+    },
+    {
+      "id": "european-history",
+      "name": "AP European History",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-european-history",
+      "description": "Traces European political, cultural, economic, and social change from the Renaissance to the present, with emphasis on source analysis and argument.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Renaissance and Exploration"
+        },
+        {
+          "number": 2,
+          "title": "Age of Reformation"
+        },
+        {
+          "number": 3,
+          "title": "Absolutism and Constitutionalism"
+        },
+        {
+          "number": 4,
+          "title": "Scientific, Philosophical, and Political Developments"
+        },
+        {
+          "number": 5,
+          "title": "Conflict, Crisis, and Reaction in the Late 18th Century"
+        },
+        {
+          "number": 6,
+          "title": "Industrialization and Its Effects"
+        },
+        {
+          "number": 7,
+          "title": "19th-Century Perspectives and Political Developments"
+        },
+        {
+          "number": 8,
+          "title": "20th-Century Global Conflicts"
+        },
+        {
+          "number": 9,
+          "title": "Cold War and Contemporary Europe"
+        }
+      ]
+    },
+    {
+      "id": "human-geography",
+      "name": "AP Human Geography",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-human-geography",
+      "description": "Examines how people organize space and shape places, covering population, culture, politics, agriculture, cities, and economic development.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Thinking Geographically"
+        },
+        {
+          "number": 2,
+          "title": "Population and Migration Patterns and Processes"
+        },
+        {
+          "number": 3,
+          "title": "Cultural Patterns and Processes"
+        },
+        {
+          "number": 4,
+          "title": "Political Patterns and Processes"
+        },
+        {
+          "number": 5,
+          "title": "Agriculture and Rural Land-Use Patterns and Processes"
+        },
+        {
+          "number": 6,
+          "title": "Cities and Urban Land-Use Patterns and Processes"
+        },
+        {
+          "number": 7,
+          "title": "Industrial and Economic Development Patterns and Processes"
+        }
+      ]
+    },
+    {
+      "id": "macroeconomics",
+      "name": "AP Macroeconomics",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-macroeconomics",
+      "description": "Studies the economy as a whole, including output, inflation, unemployment, the financial system, fiscal and monetary policy, and international trade.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Basic Economic Concepts"
+        },
+        {
+          "number": 2,
+          "title": "Economic Indicators and the Business Cycle"
+        },
+        {
+          "number": 3,
+          "title": "National Income and Price Determination"
+        },
+        {
+          "number": 4,
+          "title": "Financial Sector"
+        },
+        {
+          "number": 5,
+          "title": "Long-Run Consequences of Stabilization Policies"
+        },
+        {
+          "number": 6,
+          "title": "Open Economy—International Trade and Finance"
+        }
+      ]
+    },
+    {
+      "id": "microeconomics",
+      "name": "AP Microeconomics",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-microeconomics",
+      "description": "Studies how consumers and firms make decisions, how markets set prices, and when markets fail and government steps in.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Basic Economic Concepts"
+        },
+        {
+          "number": 2,
+          "title": "Supply and Demand"
+        },
+        {
+          "number": 3,
+          "title": "Production, Cost, and the Perfect Competition Model"
+        },
+        {
+          "number": 4,
+          "title": "Imperfect Competition"
+        },
+        {
+          "number": 5,
+          "title": "Factor Markets"
+        },
+        {
+          "number": 6,
+          "title": "Market Failure and the Role of Government"
+        }
+      ]
+    },
+    {
+      "id": "psychology",
+      "name": "AP Psychology",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-psychology",
+      "description": "A scientific look at behavior and mental processes, spanning biology, cognition, development, learning, social behavior, personality, and health.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Biological Bases of Behavior"
+        },
+        {
+          "number": 2,
+          "title": "Cognition"
+        },
+        {
+          "number": 3,
+          "title": "Development and Learning"
+        },
+        {
+          "number": 4,
+          "title": "Social Psychology and Personality"
+        },
+        {
+          "number": 5,
+          "title": "Mental and Physical Health"
+        }
+      ]
+    },
+    {
+      "id": "united-states-government-and-politics",
+      "name": "AP United States Government and Politics",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-united-states-government-and-politics",
+      "description": "Covers the constitutional foundations, institutions, civil liberties, political beliefs, and forms of participation that shape American government.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Foundations of American Democracy"
+        },
+        {
+          "number": 2,
+          "title": "Interactions Among Branches of Government"
+        },
+        {
+          "number": 3,
+          "title": "Civil Liberties and Civil Rights"
+        },
+        {
+          "number": 4,
+          "title": "American Political Ideologies and Beliefs"
+        },
+        {
+          "number": 5,
+          "title": "Political Participation"
+        }
+      ]
+    },
+    {
+      "id": "united-states-history",
+      "name": "AP United States History",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-united-states-history",
+      "description": "Surveys American history from about 1491 to the present across nine chronological periods, building skills in source analysis and historical argument.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Period 1: 1491–1607"
+        },
+        {
+          "number": 2,
+          "title": "Period 2: 1607–1754"
+        },
+        {
+          "number": 3,
+          "title": "Period 3: 1754–1800"
+        },
+        {
+          "number": 4,
+          "title": "Period 4: 1800–1848"
+        },
+        {
+          "number": 5,
+          "title": "Period 5: 1844–1877"
+        },
+        {
+          "number": 6,
+          "title": "Period 6: 1865–1898"
+        },
+        {
+          "number": 7,
+          "title": "Period 7: 1890–1945"
+        },
+        {
+          "number": 8,
+          "title": "Period 8: 1945–1980"
+        },
+        {
+          "number": 9,
+          "title": "Period 9: 1980–Present"
+        }
+      ]
+    },
+    {
+      "id": "world-history-modern",
+      "name": "AP World History: Modern",
+      "category": "history-social-science",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-world-history",
+      "description": "Surveys global history from about 1200 CE to the present, tracing trade networks, empires, revolutions, industrialization, conflict, and globalization.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "The Global Tapestry"
+        },
+        {
+          "number": 2,
+          "title": "Networks of Exchange"
+        },
+        {
+          "number": 3,
+          "title": "Land-Based Empires"
+        },
+        {
+          "number": 4,
+          "title": "Transoceanic Interconnections"
+        },
+        {
+          "number": 5,
+          "title": "Revolutions"
+        },
+        {
+          "number": 6,
+          "title": "Consequences of Industrialization"
+        },
+        {
+          "number": 7,
+          "title": "Global Conflict"
+        },
+        {
+          "number": 8,
+          "title": "Cold War and Decolonization"
+        },
+        {
+          "number": 9,
+          "title": "Globalization"
+        }
+      ]
+    },
+    {
+      "id": "calculus-ab",
+      "name": "AP Calculus AB",
+      "category": "math-cs",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-calculus-ab",
+      "description": "A first course in calculus covering limits, derivatives, integrals, and their applications, including introductory differential equations.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Limits and Continuity"
+        },
+        {
+          "number": 2,
+          "title": "Differentiation: Definition and Fundamental Properties"
+        },
+        {
+          "number": 3,
+          "title": "Differentiation: Composite, Implicit, and Inverse Functions"
+        },
+        {
+          "number": 4,
+          "title": "Contextual Applications of Differentiation"
+        },
+        {
+          "number": 5,
+          "title": "Analytical Applications of Differentiation"
+        },
+        {
+          "number": 6,
+          "title": "Integration and Accumulation of Change"
+        },
+        {
+          "number": 7,
+          "title": "Differential Equations"
+        },
+        {
+          "number": 8,
+          "title": "Applications of Integration"
+        }
+      ]
+    },
+    {
+      "id": "calculus-bc",
+      "name": "AP Calculus BC",
+      "category": "math-cs",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-calculus-bc",
+      "description": "Covers all Calculus AB material plus parametric, polar, and vector-valued functions and infinite sequences and series.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Limits and Continuity"
+        },
+        {
+          "number": 2,
+          "title": "Differentiation: Definition and Fundamental Properties"
+        },
+        {
+          "number": 3,
+          "title": "Differentiation: Composite, Implicit, and Inverse Functions"
+        },
+        {
+          "number": 4,
+          "title": "Contextual Applications of Differentiation"
+        },
+        {
+          "number": 5,
+          "title": "Analytical Applications of Differentiation"
+        },
+        {
+          "number": 6,
+          "title": "Integration and Accumulation of Change"
+        },
+        {
+          "number": 7,
+          "title": "Differential Equations"
+        },
+        {
+          "number": 8,
+          "title": "Applications of Integration"
+        },
+        {
+          "number": 9,
+          "title": "Parametric Equations, Polar Coordinates, and Vector-Valued Functions"
+        },
+        {
+          "number": 10,
+          "title": "Infinite Sequences and Series"
+        }
+      ]
+    },
+    {
+      "id": "computer-science-a",
+      "name": "AP Computer Science A",
+      "category": "math-cs",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-computer-science-a",
+      "description": "An introductory programming course in which students write, analyze, and test code using objects, control flow, classes, and data collections.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Using Objects and Methods"
+        },
+        {
+          "number": 2,
+          "title": "Selection and Iteration"
+        },
+        {
+          "number": 3,
+          "title": "Class Creation"
+        },
+        {
+          "number": 4,
+          "title": "Data Collections"
+        }
+      ]
+    },
+    {
+      "id": "computer-science-principles",
+      "name": "AP Computer Science Principles",
+      "category": "math-cs",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-computer-science-principles",
+      "description": "A broad introduction to computing organized around five big ideas: creative development, data, algorithms and programming, networks, and the societal impact of computing.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Creative Development"
+        },
+        {
+          "number": 2,
+          "title": "Data"
+        },
+        {
+          "number": 3,
+          "title": "Algorithms and Programming"
+        },
+        {
+          "number": 4,
+          "title": "Computer Systems and Networks"
+        },
+        {
+          "number": 5,
+          "title": "Impact of Computing"
+        }
+      ]
+    },
+    {
+      "id": "precalculus",
+      "name": "AP Precalculus",
+      "category": "math-cs",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-precalculus",
+      "description": "Builds readiness for calculus by modeling with polynomial, rational, exponential, logarithmic, trigonometric, and polar functions, plus parameters, vectors, and matrices.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Polynomial and Rational Functions"
+        },
+        {
+          "number": 2,
+          "title": "Exponential and Logarithmic Functions"
+        },
+        {
+          "number": 3,
+          "title": "Trigonometric and Polar Functions"
+        },
+        {
+          "number": 4,
+          "title": "Functions Involving Parameters, Vectors, and Matrices"
+        }
+      ]
+    },
+    {
+      "id": "statistics",
+      "name": "AP Statistics",
+      "category": "math-cs",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-statistics",
+      "description": "Introduces collecting and exploring data, probability and random variables, and statistical inference for proportions, means, and regression.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Exploring One-Variable Data and Collecting Data"
+        },
+        {
+          "number": 2,
+          "title": "Probability, Random Variables, and Probability Distributions"
+        },
+        {
+          "number": 3,
+          "title": "Inference for Categorical Data: Proportions"
+        },
+        {
+          "number": 4,
+          "title": "Inference for Quantitative Data: Means"
+        },
+        {
+          "number": 5,
+          "title": "Regression Analysis"
+        }
+      ]
+    },
+    {
+      "id": "biology",
+      "name": "AP Biology",
+      "category": "sciences",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-biology",
+      "description": "Explores living systems from molecules and cells to heredity, gene expression, evolution, and ecology, with inquiry-based lab work.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Chemistry of Life"
+        },
+        {
+          "number": 2,
+          "title": "Cells"
+        },
+        {
+          "number": 3,
+          "title": "Cellular Energetics"
+        },
+        {
+          "number": 4,
+          "title": "Cell Communication and Cell Cycle"
+        },
+        {
+          "number": 5,
+          "title": "Heredity"
+        },
+        {
+          "number": 6,
+          "title": "Gene Expression and Regulation"
+        },
+        {
+          "number": 7,
+          "title": "Natural Selection"
+        },
+        {
+          "number": 8,
+          "title": "Ecology"
+        }
+      ]
+    },
+    {
+      "id": "chemistry",
+      "name": "AP Chemistry",
+      "category": "sciences",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-chemistry",
+      "description": "Covers atomic and molecular structure, reactions, kinetics, thermochemistry, equilibrium, acids and bases, and electrochemistry, with inquiry-based lab work.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Atomic Structure and Properties"
+        },
+        {
+          "number": 2,
+          "title": "Compound Structure and Properties"
+        },
+        {
+          "number": 3,
+          "title": "Properties of Substances and Mixtures"
+        },
+        {
+          "number": 4,
+          "title": "Chemical Reactions"
+        },
+        {
+          "number": 5,
+          "title": "Kinetics"
+        },
+        {
+          "number": 6,
+          "title": "Thermochemistry"
+        },
+        {
+          "number": 7,
+          "title": "Equilibrium"
+        },
+        {
+          "number": 8,
+          "title": "Acids and Bases"
+        },
+        {
+          "number": 9,
+          "title": "Thermodynamics and Electrochemistry"
+        }
+      ]
+    },
+    {
+      "id": "environmental-science",
+      "name": "AP Environmental Science",
+      "category": "sciences",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-environmental-science",
+      "description": "Examines ecosystems, biodiversity, populations, Earth systems, resource and energy use, pollution, and global change through labs and field work.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "The Living World: Ecosystems"
+        },
+        {
+          "number": 2,
+          "title": "The Living World: Biodiversity"
+        },
+        {
+          "number": 3,
+          "title": "Populations"
+        },
+        {
+          "number": 4,
+          "title": "Earth Systems and Resources"
+        },
+        {
+          "number": 5,
+          "title": "Land and Water Use"
+        },
+        {
+          "number": 6,
+          "title": "Energy Resources and Consumption"
+        },
+        {
+          "number": 7,
+          "title": "Atmospheric Pollution"
+        },
+        {
+          "number": 8,
+          "title": "Aquatic and Terrestrial Pollution"
+        },
+        {
+          "number": 9,
+          "title": "Global Change"
+        }
+      ]
+    },
+    {
+      "id": "physics-1",
+      "name": "AP Physics 1: Algebra-Based",
+      "category": "sciences",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-physics-1",
+      "description": "An algebra-based introduction to mechanics covering motion, forces, energy, momentum, rotation, oscillations, and fluids.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Kinematics"
+        },
+        {
+          "number": 2,
+          "title": "Force and Translational Dynamics"
+        },
+        {
+          "number": 3,
+          "title": "Work, Energy, and Power"
+        },
+        {
+          "number": 4,
+          "title": "Linear Momentum"
+        },
+        {
+          "number": 5,
+          "title": "Torque and Rotational Dynamics"
+        },
+        {
+          "number": 6,
+          "title": "Energy and Momentum of Rotating Systems"
+        },
+        {
+          "number": 7,
+          "title": "Oscillations"
+        },
+        {
+          "number": 8,
+          "title": "Fluids"
+        }
+      ]
+    },
+    {
+      "id": "physics-2",
+      "name": "AP Physics 2: Algebra-Based",
+      "category": "sciences",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-physics-2",
+      "description": "An algebra-based continuation of physics covering thermodynamics, electricity, circuits, magnetism, optics, waves, and modern physics.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 9,
+          "title": "Thermodynamics"
+        },
+        {
+          "number": 10,
+          "title": "Electric Force, Field, and Potential"
+        },
+        {
+          "number": 11,
+          "title": "Electric Circuits"
+        },
+        {
+          "number": 12,
+          "title": "Magnetism and Electromagnetism"
+        },
+        {
+          "number": 13,
+          "title": "Geometric Optics"
+        },
+        {
+          "number": 14,
+          "title": "Waves, Sound, and Physical Optics"
+        },
+        {
+          "number": 15,
+          "title": "Modern Physics"
+        }
+      ]
+    },
+    {
+      "id": "physics-c-electricity-and-magnetism",
+      "name": "AP Physics C: Electricity and Magnetism",
+      "category": "sciences",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-physics-c-electricity-and-magnetism",
+      "description": "A calculus-based study of electric charge, fields and potential, capacitors, circuits, magnetic fields, and electromagnetic induction.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 8,
+          "title": "Electric Charges, Fields, and Gauss's Law"
+        },
+        {
+          "number": 9,
+          "title": "Electric Potential"
+        },
+        {
+          "number": 10,
+          "title": "Conductors and Capacitors"
+        },
+        {
+          "number": 11,
+          "title": "Electric Circuits"
+        },
+        {
+          "number": 12,
+          "title": "Magnetic Fields and Electromagnetism"
+        },
+        {
+          "number": 13,
+          "title": "Electromagnetic Induction"
+        }
+      ]
+    },
+    {
+      "id": "physics-c-mechanics",
+      "name": "AP Physics C: Mechanics",
+      "category": "sciences",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-physics-c-mechanics",
+      "description": "A calculus-based study of motion, forces, energy, momentum, rotation, and oscillations.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Kinematics"
+        },
+        {
+          "number": 2,
+          "title": "Force and Translational Dynamics"
+        },
+        {
+          "number": 3,
+          "title": "Work, Energy, and Power"
+        },
+        {
+          "number": 4,
+          "title": "Linear Momentum"
+        },
+        {
+          "number": 5,
+          "title": "Torque and Rotational Dynamics"
+        },
+        {
+          "number": 6,
+          "title": "Energy and Momentum of Rotating Systems"
+        },
+        {
+          "number": 7,
+          "title": "Oscillations"
+        }
+      ]
+    },
+    {
+      "id": "chinese-language-and-culture",
+      "name": "AP Chinese Language and Culture",
+      "category": "world-languages",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-chinese-language-and-culture",
+      "description": "Builds Mandarin Chinese proficiency in speaking, listening, reading, and writing while exploring the cultures of Chinese-speaking communities.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Families and Communities"
+        },
+        {
+          "number": 2,
+          "title": "Language and Culture"
+        },
+        {
+          "number": 3,
+          "title": "Art and Creativity"
+        },
+        {
+          "number": 4,
+          "title": "Science and Technology"
+        },
+        {
+          "number": 5,
+          "title": "Contemporary Life"
+        },
+        {
+          "number": 6,
+          "title": "Global Contexts"
+        }
+      ]
+    },
+    {
+      "id": "french-language-and-culture",
+      "name": "AP French Language and Culture",
+      "category": "world-languages",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-french-language-and-culture",
+      "description": "Builds French proficiency in speaking, listening, reading, and writing while exploring the cultures of the French-speaking world.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Families and Communities"
+        },
+        {
+          "number": 2,
+          "title": "Language and Culture"
+        },
+        {
+          "number": 3,
+          "title": "Art and Creativity"
+        },
+        {
+          "number": 4,
+          "title": "Science and Technology"
+        },
+        {
+          "number": 5,
+          "title": "Contemporary Life"
+        },
+        {
+          "number": 6,
+          "title": "Global Contexts"
+        }
+      ]
+    },
+    {
+      "id": "german-language-and-culture",
+      "name": "AP German Language and Culture",
+      "category": "world-languages",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-german-language-and-culture",
+      "description": "Builds German proficiency in speaking, listening, reading, and writing while exploring the cultures of German-speaking communities.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Families and Communities"
+        },
+        {
+          "number": 2,
+          "title": "Language and Culture"
+        },
+        {
+          "number": 3,
+          "title": "Art and Creativity"
+        },
+        {
+          "number": 4,
+          "title": "Science and Technology"
+        },
+        {
+          "number": 5,
+          "title": "Contemporary Life"
+        },
+        {
+          "number": 6,
+          "title": "Global Contexts"
+        }
+      ]
+    },
+    {
+      "id": "italian-language-and-culture",
+      "name": "AP Italian Language and Culture",
+      "category": "world-languages",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-italian-language-and-culture",
+      "description": "Builds Italian proficiency in speaking, listening, reading, and writing while exploring Italian culture and society.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Families and Communities"
+        },
+        {
+          "number": 2,
+          "title": "Language and Culture"
+        },
+        {
+          "number": 3,
+          "title": "Art and Creativity"
+        },
+        {
+          "number": 4,
+          "title": "Science and Technology"
+        },
+        {
+          "number": 5,
+          "title": "Contemporary Life"
+        },
+        {
+          "number": 6,
+          "title": "Global Contexts"
+        }
+      ]
+    },
+    {
+      "id": "japanese-language-and-culture",
+      "name": "AP Japanese Language and Culture",
+      "category": "world-languages",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-japanese-language-and-culture",
+      "description": "Builds Japanese proficiency in speaking, listening, reading, and writing while exploring Japanese culture and society.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Families and Communities"
+        },
+        {
+          "number": 2,
+          "title": "Language and Culture"
+        },
+        {
+          "number": 3,
+          "title": "Art and Creativity"
+        },
+        {
+          "number": 4,
+          "title": "Science and Technology"
+        },
+        {
+          "number": 5,
+          "title": "Contemporary Life"
+        },
+        {
+          "number": 6,
+          "title": "Global Contexts"
+        }
+      ]
+    },
+    {
+      "id": "latin",
+      "name": "AP Latin",
+      "category": "world-languages",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-latin",
+      "description": "Students read, translate, and analyze Latin prose and poetry, centered on Pliny the Younger's Letters and Vergil's Aeneid.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Teacher's Choice – Latin Prose"
+        },
+        {
+          "number": 2,
+          "title": "Pliny's Letters: Eruption of Mt. Vesuvius"
+        },
+        {
+          "number": 3,
+          "title": "Pliny's Letters: Ghosts and Apparitions, Letters to Trajan and Calpurnia, and Teacher's Choice – Latin Prose"
+        },
+        {
+          "number": 4,
+          "title": "Teacher's Choice – Latin Poetry and Vergil's Aeneid, Excerpts from Books 1 and 2"
+        },
+        {
+          "number": 5,
+          "title": "Vergil, Aeneid, Excerpts from Books 4, 6, 7, 11, and 12"
+        },
+        {
+          "number": 6,
+          "title": "Course Project and Teacher's Choice – Latin Poetry"
+        }
+      ]
+    },
+    {
+      "id": "spanish-language-and-culture",
+      "name": "AP Spanish Language and Culture",
+      "category": "world-languages",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-spanish-language-and-culture",
+      "description": "Builds Spanish proficiency in speaking, listening, reading, and writing while exploring the cultures of the Spanish-speaking world.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Families and Communities"
+        },
+        {
+          "number": 2,
+          "title": "Language and Culture"
+        },
+        {
+          "number": 3,
+          "title": "Art and Creativity"
+        },
+        {
+          "number": 4,
+          "title": "Science and Technology"
+        },
+        {
+          "number": 5,
+          "title": "Contemporary Life"
+        },
+        {
+          "number": 6,
+          "title": "Global Contexts"
+        }
+      ]
+    },
+    {
+      "id": "spanish-literature-and-culture",
+      "name": "AP Spanish Literature and Culture",
+      "category": "world-languages",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-spanish-literature-and-culture",
+      "description": "A survey of literature written in Spanish, from medieval works to contemporary authors of Spain, Latin America, and the United States.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "La época medieval"
+        },
+        {
+          "number": 2,
+          "title": "El siglo XVI"
+        },
+        {
+          "number": 3,
+          "title": "El siglo XVII"
+        },
+        {
+          "number": 4,
+          "title": "La literatura romántica, realista y naturalista"
+        },
+        {
+          "number": 5,
+          "title": "La Generación del 98 y el Modernismo"
+        },
+        {
+          "number": 6,
+          "title": "Teatro y poesía del siglo XX"
+        },
+        {
+          "number": 7,
+          "title": "El Boom latinoamericano"
+        },
+        {
+          "number": 8,
+          "title": "Escritores contemporáneos de Estados Unidos, y España"
+        }
+      ]
+    },
+    {
+      "id": "research",
+      "name": "AP Research",
+      "category": "capstone",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-research",
+      "description": "A yearlong independent investigation in which students design and carry out a study, write an academic paper, and present and defend their findings.",
+      "outlineVerified": true,
+      "units": []
+    },
+    {
+      "id": "seminar",
+      "name": "AP Seminar",
+      "category": "capstone",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-seminar",
+      "description": "Students investigate real-world issues from multiple perspectives, evaluate sources, and develop written arguments and team and individual presentations.",
+      "outlineVerified": true,
+      "units": []
+    },
+    {
+      "id": "business-with-personal-finance",
+      "name": "AP Business with Personal Finance",
+      "category": "career-kickstart",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-business-personal-finance",
+      "description": "Introduces how businesses compete, market, finance, and manage operations, alongside personal money skills such as saving, borrowing, budgeting, and investing.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Businesses, Competition, and New Ideas"
+        },
+        {
+          "number": 2,
+          "title": "Marketing"
+        },
+        {
+          "number": 3,
+          "title": "Part 1: Personal Saving and Borrowing"
+        },
+        {
+          "number": 3,
+          "title": "Part 2: Business Finance and Accounting"
+        },
+        {
+          "number": 4,
+          "title": "Management and Strategy"
+        },
+        {
+          "number": 5,
+          "title": "Personal Goals, Budgeting, and Investing"
+        }
+      ]
+    },
+    {
+      "id": "cybersecurity",
+      "name": "AP Cybersecurity",
+      "category": "career-kickstart",
+      "availability": "active",
+      "availabilityNote": null,
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-cybersecurity",
+      "description": "Teaches layered defense, showing how to protect physical spaces, networks, devices, applications, and data from security threats.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Introduction to Security"
+        },
+        {
+          "number": 2,
+          "title": "Securing Physical Spaces"
+        },
+        {
+          "number": 3,
+          "title": "Securing Networks"
+        },
+        {
+          "number": 4,
+          "title": "Securing Devices"
+        },
+        {
+          "number": 5,
+          "title": "Securing Applications and Data"
+        }
+      ]
+    },
+    {
+      "id": "networking",
+      "name": "AP Networking",
+      "category": "career-kickstart",
+      "availability": "upcoming",
+      "availabilityNote": "Launching in the 2027-28 school year; 2026-27 is the final pilot year. Unit titles are from the 2026-27 pilot course framework and may change.",
+      "sourceUrl": "https://apcentral.collegeboard.org/courses/ap-networking/adopt",
+      "description": "Introduces how computer networks are built, connected, and managed, from personal and shared connections up to large-scale and global networks.",
+      "outlineVerified": true,
+      "units": [
+        {
+          "number": 1,
+          "title": "Managing My Connections"
+        },
+        {
+          "number": 2,
+          "title": "Managing My Shared Connections"
+        },
+        {
+          "number": 3,
+          "title": "Managing Many Connections"
+        },
+        {
+          "number": 4,
+          "title": "Managing Our Global Connections"
+        }
+      ]
+    }
+  ]
+}
