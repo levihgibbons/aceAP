@@ -1,20 +1,25 @@
 "use client";
 /**
- * End-of-lesson control: "Mark lesson complete", then what's next. Says
- * plainly that completing a lesson doesn't change mastery — only answered
- * questions do.
+ * End of a lesson: practice for this topic first (it's what moves mastery),
+ * then "Mark lesson complete" and the next lesson. Completing a lesson never
+ * changes mastery — only answered questions do.
  */
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, CheckCircle2, ClipboardList, Dumbbell, Info } from "lucide-react";
-import { Button, MasteryBadge } from "@/components/ui";
+import { ArrowRight, CheckCircle2, ClipboardCheck, Dumbbell } from "lucide-react";
+import { Button, ButtonLink } from "@/components/ui";
 import { apiFetch } from "@/lib/api";
-import type { MasteryLevel } from "@/modules/mastery/types";
+
+export interface PracticeLink {
+  href: string;
+  title: string;
+  meta: string;
+  kind: "exercise" | "quiz" | "skill";
+}
 
 export interface LessonNextSteps {
   nextLesson: { href: string; title: string } | null;
-  practice: { href: string; skillName: string; level: MasteryLevel; needsReview: boolean }[];
-  quiz: { href: string; title: string } | null;
+  practice: PracticeLink[];
   courseHref: string;
 }
 
@@ -39,28 +44,62 @@ export function LessonCompletion({ lessonId, initiallyCompleted, next }: { lesso
   };
 
   return (
-    <section aria-labelledby="lesson-complete-title" className="rounded-card border border-line bg-surface shadow-card">
-      <div className="p-5 sm:p-6">
+    <div className="space-y-4">
+      {next.practice.length ? (
+        <section aria-labelledby="lesson-practice-title" className="rounded-card border border-accent/30 bg-accent-soft/40 p-5 sm:p-6">
+          <h2 id="lesson-practice-title" className="flex items-center gap-2 font-display text-lg font-semibold text-ink">
+            <Dumbbell aria-hidden="true" className="size-5 text-accent" />
+            Now practise it
+          </h2>
+          <p className="mt-1 text-sm text-muted">Reading doesn&apos;t change your skill level. Answering questions does.</p>
+          <ul className="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
+            {next.practice.map((p, i) => (
+              <li key={p.href}>
+                <Link href={p.href} className="group flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-2">
+                  {p.kind === "quiz" ? (
+                    <ClipboardCheck aria-hidden="true" className="size-[1.125rem] shrink-0 text-muted" />
+                  ) : (
+                    <Dumbbell aria-hidden="true" className="size-[1.125rem] shrink-0 text-accent" />
+                  )}
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-medium text-ink underline-offset-4 group-hover:underline">{p.title}</span>
+                    <span className="mt-0.5 block text-xs text-muted">{p.meta}</span>
+                  </span>
+                  <span className={i === 0 ? "text-sm font-semibold text-accent" : "text-xs font-medium text-accent"}>
+                    Start <ArrowRight aria-hidden="true" className="inline size-3.5" />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <section aria-labelledby="lesson-complete-title" className="rounded-card border border-line bg-surface p-5 shadow-card sm:p-6">
         {completed ? (
-          <div className="flex items-start gap-3" role={justCompleted ? "status" : undefined}>
-            <CheckCircle2 aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-good" />
-            <div>
-              <h2 id="lesson-complete-title" className="font-display text-lg font-semibold text-ink">
-                {justCompleted ? "Lesson complete — nice work" : "You've completed this lesson"}
-              </h2>
-              <p className="mt-1 text-sm text-muted">Completing a lesson doesn&apos;t change your mastery — only answered questions do. Practice is how your skills move.</p>
-            </div>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between" role={justCompleted ? "status" : undefined}>
+            <h2 id="lesson-complete-title" className="flex items-center gap-2 font-display text-lg font-semibold text-ink">
+              <CheckCircle2 aria-hidden="true" className="size-5 shrink-0 text-good" />
+              {justCompleted ? "Lesson complete — nice work" : "You've completed this lesson"}
+            </h2>
+            {next.nextLesson ? (
+              <ButtonLink href={next.nextLesson.href} variant="secondary" iconRight={<ArrowRight aria-hidden="true" className="size-4" />}>
+                <span className="sr-only">Next lesson: </span>
+                {next.nextLesson.title}
+              </ButtonLink>
+            ) : (
+              <ButtonLink href={next.courseHref} variant="secondary">
+                Back to the course
+              </ButtonLink>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 id="lesson-complete-title" className="font-display text-lg font-semibold text-ink">
-                Finished working through it?
+                Finished reading?
               </h2>
-              <p className="mt-1 flex items-start gap-1.5 text-sm text-muted">
-                <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-                Marking it complete records that you reached the end. It doesn&apos;t change your mastery — only answered questions do.
-              </p>
+              <p className="mt-0.5 text-xs text-muted">This doesn&apos;t change your mastery — only answered questions do.</p>
             </div>
             <Button onClick={complete} loading={busy} loadingText="Saving…" icon={<CheckCircle2 aria-hidden="true" className="size-4" />}>
               Mark lesson complete
@@ -72,60 +111,7 @@ export function LessonCompletion({ lessonId, initiallyCompleted, next }: { lesso
             {error}
           </p>
         ) : null}
-      </div>
-
-      {completed ? (
-        <div className="border-t border-line px-5 py-5 sm:px-6">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">What&apos;s next</h3>
-          <ul className="mt-3 divide-y divide-line">
-            {next.practice.map((p) => (
-              <li key={p.href} className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0">
-                <div className="flex min-w-0 items-start gap-2.5">
-                  <Dumbbell aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-ink">Practice: {p.skillName}</p>
-                    <div className="mt-1">
-                      <MasteryBadge level={p.level} needsReview={p.needsReview} size="sm" />
-                    </div>
-                  </div>
-                </div>
-                <Link href={p.href} className="inline-flex items-center gap-1 text-sm font-medium text-accent underline-offset-4 hover:underline">
-                  Start practice <ArrowRight aria-hidden="true" className="size-4" />
-                </Link>
-              </li>
-            ))}
-            {next.quiz ? (
-              <li className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0">
-                <p className="flex min-w-0 items-start gap-2.5 text-sm font-medium text-ink">
-                  <ClipboardList aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" />
-                  <span>Check yourself: {next.quiz.title}</span>
-                </p>
-                <Link href={next.quiz.href} className="inline-flex items-center gap-1 text-sm font-medium text-accent underline-offset-4 hover:underline">
-                  See the quiz <ArrowRight aria-hidden="true" className="size-4" />
-                </Link>
-              </li>
-            ) : null}
-            {next.nextLesson ? (
-              <li className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0">
-                <p className="min-w-0 text-sm text-ink">
-                  <span className="text-muted">Next lesson: </span>
-                  <span className="font-medium">{next.nextLesson.title}</span>
-                </p>
-                <Link href={next.nextLesson.href} className="inline-flex items-center gap-1 text-sm font-medium text-accent underline-offset-4 hover:underline">
-                  Continue <ArrowRight aria-hidden="true" className="size-4" />
-                </Link>
-              </li>
-            ) : (
-              <li className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0">
-                <p className="text-sm text-ink">That&apos;s the last lesson in this course for now.</p>
-                <Link href={next.courseHref} className="inline-flex items-center gap-1 text-sm font-medium text-accent underline-offset-4 hover:underline">
-                  Back to the course <ArrowRight aria-hidden="true" className="size-4" />
-                </Link>
-              </li>
-            )}
-          </ul>
-        </div>
-      ) : null}
-    </section>
+      </section>
+    </div>
   );
 }

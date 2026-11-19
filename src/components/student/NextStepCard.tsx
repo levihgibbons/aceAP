@@ -1,15 +1,37 @@
-/** The single next step on a course's guided path, with one clear action. */
-import { ArrowRight, BookOpen } from "lucide-react";
+/** The single next step on a course's guided path: the lesson, and the practice that goes with it. */
+import { ArrowRight, BookOpen, Dumbbell } from "lucide-react";
 import { ButtonLink } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import type { CourseTree } from "@/modules/curriculum/queries";
 import { NEXT_STEP_ACTION, NEXT_STEP_EYEBROW, type NextStep } from "./roadmap";
 
-export function NextStepCard({ step, courseName, className }: { step: NextStep; courseName?: string; className?: string }) {
+/** The first practice for a lesson's topic: an exercise, else a topic quiz. */
+export function practiceForLesson(tree: CourseTree, lessonId: string): { href: string; title: string } | null {
+  const lesson = tree.lessons.get(lessonId);
+  if (!lesson) return null;
+  const inTopic = tree.assessments.filter((a) => a.topicId === lesson.topicId);
+  const a = inTopic.find((x) => x.kind === "exercise") ?? inTopic[0];
+  if (a) return { href: `/app/assessments/${a.id}`, title: a.title };
+  const skill = lesson.skillIds[0];
+  return skill ? { href: `/app/practice/${skill}`, title: tree.skills.get(skill)?.name ?? "this skill" } : null;
+}
+
+export function NextStepCard({
+  step,
+  practice,
+  courseName,
+  className,
+}: {
+  step: NextStep;
+  practice?: { href: string; title: string } | null;
+  courseName?: string;
+  className?: string;
+}) {
   return (
     <section
       aria-labelledby="next-step-title"
       className={cn(
-        "flex flex-col gap-4 rounded-card border border-accent/25 bg-accent-soft/50 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6",
+        "flex flex-col gap-4 rounded-card border border-accent/25 bg-accent-soft/50 p-5 sm:p-6 md:flex-row md:items-center md:justify-between",
         className,
       )}
     >
@@ -24,18 +46,26 @@ export function NextStepCard({ step, courseName, className }: { step: NextStep; 
             {step.lesson.title}
           </h2>
           <p className="mt-1 text-sm text-muted">
-            {courseName ? `${courseName} · ` : ""}Unit {step.unit.number}: {step.unit.title} · ~{step.lesson.estMinutes} min
+            {courseName ? `${courseName} · ` : ""}Unit {step.unit.number} · ~{step.lesson.estMinutes} min
           </p>
         </div>
       </div>
-      <ButtonLink
-        href={`/app/learn/${step.lesson.id}`}
-        size="lg"
-        className="shrink-0 self-start sm:self-auto"
-        iconRight={<ArrowRight aria-hidden="true" className="size-4" />}
-      >
-        {NEXT_STEP_ACTION[step.mode]}
-      </ButtonLink>
+      <div className="flex shrink-0 flex-wrap gap-2">
+        <ButtonLink href={`/app/learn/${step.lesson.id}`} size="lg" iconRight={<ArrowRight aria-hidden="true" className="size-4" />}>
+          {NEXT_STEP_ACTION[step.mode]}
+        </ButtonLink>
+        {practice ? (
+          <ButtonLink
+            href={practice.href}
+            size="lg"
+            variant="secondary"
+            icon={<Dumbbell aria-hidden="true" className="size-4" />}
+            aria-label={`Practise: ${practice.title}`}
+          >
+            Practise
+          </ButtonLink>
+        ) : null}
+      </div>
     </section>
   );
 }

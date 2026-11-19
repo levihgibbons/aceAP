@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { Clock } from "lucide-react";
 import { ActivityTracker } from "@/components/activity/ActivityTracker";
 import { LessonBlocks, type LessonChecks } from "@/components/lesson/LessonBlocks";
-import { LessonCompletion, type LessonNextSteps } from "@/components/lesson/LessonCompletion";
+import { LessonCompletion, type LessonNextSteps, type PracticeLink } from "@/components/lesson/LessonCompletion";
+import { scoreText } from "@/components/student/format";
 import { LessonNav } from "@/components/lesson/LessonNav";
 import { LessonProgressTracker } from "@/components/lesson/LessonProgressTracker";
 import { LessonShell } from "@/components/lesson/LessonShell";
@@ -72,15 +73,25 @@ export default async function LessonPage({ params }: Props) {
   const order = tree.lessonOrder;
   const nextId = order.slice(order.indexOf(lessonId) + 1).find((id) => tree.lessons.get(id)?.publishedVersion);
   const nextLesson = nextId ? tree.lessons.get(nextId)! : null;
+  // Practice for this topic: its exercises, else skill practice; then its quiz.
+  const topicAssessments = tree.assessments.filter((a) => a.topicId === lesson.topicId);
+  const best = (id: string) => {
+    const r = overview.assessmentResults.get(id);
+    return r ? `Best ${scoreText(r.bestScore, r.maxScore)}` : null;
+  };
+  const exercises: PracticeLink[] = topicAssessments
+    .filter((a) => a.kind === "exercise")
+    .map((a) => ({ href: `/app/assessments/${a.id}`, title: a.title, meta: best(a.id) ?? "New questions every try", kind: "exercise" }));
+  const skillPractice: PracticeLink[] = taught.map((s) => ({ href: `/app/practice/${s.id}`, title: `Practise: ${s.name}`, meta: "Adaptive practice", kind: "skill" }));
   const quiz =
-    tree.assessments.find((a) => a.topicId === lesson.topicId && a.kind === "exercise") ??
-    tree.assessments.find((a) => a.topicId === lesson.topicId && (a.kind === "lesson_quiz" || a.kind === "skill_quiz")) ??
-    tree.assessments.find((a) => (a.kind === "lesson_quiz" || a.kind === "skill_quiz") && a.skillIds.some((s) => taughtIds.has(s))) ??
-    null;
+    topicAssessments.find((a) => a.kind !== "exercise") ??
+    tree.assessments.find((a) => (a.kind === "lesson_quiz" || a.kind === "skill_quiz") && a.skillIds.some((s) => taughtIds.has(s)));
   const next: LessonNextSteps = {
     nextLesson: nextLesson ? { href: `/app/learn/${nextLesson.id}`, title: nextLesson.title } : null,
-    practice: taught.map((s) => ({ href: `/app/practice/${s.id}`, skillName: s.name, level: s.level, needsReview: s.needsReview })),
-    quiz: quiz ? { href: `/app/assessments/${quiz.id}`, title: quiz.title } : null,
+    practice: [
+      ...(exercises.length ? exercises : skillPractice),
+      ...(quiz ? [{ href: `/app/assessments/${quiz.id}`, title: quiz.title, meta: best(quiz.id) ?? `Quiz · ${quiz.questionCount} questions`, kind: "quiz" as const }] : []),
+    ],
     courseHref: `/app/courses/${courseId}`,
   };
 

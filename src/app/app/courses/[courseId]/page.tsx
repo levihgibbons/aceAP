@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Lock, Target } from "lucide-react";
+import { ArrowRight, ChevronDown, Lock, Target } from "lucide-react";
 import { CATEGORY_LABELS } from "@content/index";
 import {
   Badge,
@@ -9,22 +9,17 @@ import {
   Card,
   CardBody,
   CardHeader,
-  MasteryLegend,
   PageHeader,
   Section,
   pluralize,
 } from "@/components/ui";
 import { AddCourseButton } from "@/components/student/AddCourseButton";
 import {
-  CompletionMeter,
   ContentStatusBadge,
   ExternalLink,
-  MasteryOverview,
-  MiniLabel,
 } from "@/components/student/Bits";
 import { CheckpointStep, CourseRoadmap } from "@/components/student/CourseRoadmap";
-import { NextStepCard } from "@/components/student/NextStepCard";
-import { RecommendationItem } from "@/components/student/RecommendationItem";
+import { NextStepCard, practiceForLesson } from "@/components/student/NextStepCard";
 import { nextStepFor } from "@/components/student/roadmap";
 import { requireStudent } from "@/modules/auth/session";
 import { CONTENT_STATUS_LABEL, getCatalog, getCourseTree, type CourseTree } from "@/modules/curriculum/queries";
@@ -160,9 +155,8 @@ export default async function CoursePage({ params }: Params) {
   const o = await getCourseOverview(actor, user.id, course.id);
   const step = nextStepFor(tree, o);
   const nextLessonId = step && step.mode !== "done" ? step.lesson.id : null;
-  const suggestions = o.recommendations
-    .filter((r) => r.kind !== "assignment" && !(nextLessonId && r.href === `/app/learn/${nextLessonId}`))
-    .slice(0, 3);
+  const exercises = tree.assessments.filter((a) => a.kind === "exercise");
+  const exercisesTried = exercises.filter((a) => o.assessmentResults.has(a.id)).length;
   const openAssignments = o.assignments.filter((a) => !a.done);
   const courseLevelAssessments = tree.assessments.filter((a) => !a.unitId);
 
@@ -170,34 +164,20 @@ export default async function CoursePage({ params }: Params) {
     <>
       {header}
 
-      {step ? <NextStepCard step={step} className="mb-10" /> : null}
+      {step ? <NextStepCard step={step} practice={step.mode === "done" ? null : practiceForLesson(tree, step.lesson.id)} className="mb-8" /> : null}
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_17rem]">
         <section aria-labelledby="roadmap-title" className="min-w-0">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h2 id="roadmap-title" className="font-display text-xl font-semibold tracking-[-0.01em] text-ink">
-                Roadmap
-              </h2>
-              <p className="mt-1 text-sm text-muted">
-                Units in order. Each topic teaches with lessons, then practice exercises apply it; quizzes and tests check it. Open anything at any
-                time.
-              </p>
-            </div>
-            <MasteryLegend className="hidden xl:flex" />
+          <div className="mb-4">
+            <h2 id="roadmap-title" className="font-display text-xl font-semibold tracking-[-0.01em] text-ink">
+              Roadmap
+            </h2>
+            <p className="mt-1 text-sm text-muted">Read a lesson, then practise it. Open any unit to see its topics.</p>
           </div>
           <CourseRoadmap o={o} nextLessonId={nextLessonId} />
 
           {courseLevelAssessments.length ? (
-            <Section
-              title="Full-course practice"
-              id="exam-practice"
-              action={
-                <ButtonLink href={`/app/exam-prep/${course.id}`} variant="link" size="sm">
-                  Exam prep overview
-                </ButtonLink>
-              }
-            >
+            <Section title="Full-course practice" id="exam-practice">
               <Card padded={false} className="overflow-hidden">
                 <ol className="divide-y divide-line">
                   {courseLevelAssessments.map((a) => (
@@ -209,38 +189,55 @@ export default async function CoursePage({ params }: Params) {
               </Card>
             </Section>
           ) : null}
+
+          <details className="group mt-10">
+            <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm text-muted hover:text-ink [&::-webkit-details-marker]:hidden">
+              About this course
+              <ChevronDown aria-hidden="true" className="size-4 transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="mt-3 max-w-xl">{about}</div>
+          </details>
         </section>
 
-        <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start" aria-label="Progress and course details">
+        <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start" aria-label="Your progress">
           <Card as="section" aria-labelledby="progress-title">
             <h2 id="progress-title" className="text-sm font-semibold text-ink">
               Your progress
             </h2>
-            <div className="mt-4 space-y-5">
+            <dl className="mt-4 grid grid-cols-2 gap-4">
               <div>
-                <MiniLabel>Lessons</MiniLabel>
-                <CompletionMeter completed={o.lessonsCompleted} total={o.lessonsTotal} size="sm" />
+                <dt className="text-xs text-muted">Lessons read</dt>
+                <dd className="mt-0.5 font-display text-2xl font-semibold text-ink tabular-nums">
+                  {o.lessonsCompleted}
+                  <span className="text-sm font-normal text-muted">/{o.lessonsTotal}</span>
+                </dd>
               </div>
               <div>
-                <MiniLabel>Mastery</MiniLabel>
-                <MasteryOverview rollup={o.rollups.course} label={`${course.name} skill mastery`} size="sm" />
+                <dt className="text-xs text-muted">Practice sets tried</dt>
+                <dd className="mt-0.5 font-display text-2xl font-semibold text-ink tabular-nums">
+                  {exercisesTried}
+                  <span className="text-sm font-normal text-muted">/{exercises.length}</span>
+                </dd>
               </div>
-            </div>
-            <p className="mt-4 text-xs text-muted">
-              Finishing a lesson is progress; mastery comes only from your graded answers.{" "}
-              <Link href="/app/progress#how-mastery-works" className="text-accent underline underline-offset-4">
-                How mastery works
-              </Link>
-            </p>
+              <div className="col-span-2">
+                <dt className="text-xs text-muted">Skills at Proficient or better</dt>
+                <dd className="mt-0.5 font-display text-2xl font-semibold text-ink tabular-nums">
+                  {o.rollups.course.proficientOrBetter}
+                  <span className="text-sm font-normal text-muted">/{o.rollups.course.totalSkills}</span>
+                </dd>
+              </div>
+            </dl>
+            <Link href="/app/progress" className="mt-4 inline-block text-xs text-accent underline underline-offset-4">
+              Skill-by-skill progress
+            </Link>
           </Card>
 
           {enrolment?.via === "class" ? (
             <Card as="section" aria-labelledby="class-title">
               <h2 id="class-title" className="text-sm font-semibold text-ink">
-                Your class
+                {enrolment.className}
               </h2>
-              <p className="mt-1 text-sm text-ink-2">{enrolment.className}</p>
-              <p className="mt-2 text-xs text-muted">
+              <p className="mt-1 text-xs text-muted">
                 {openAssignments.length
                   ? `${pluralize(openAssignments.length, "open assignment")} from your teacher.`
                   : "No open assignments right now."}
@@ -250,23 +247,6 @@ export default async function CoursePage({ params }: Params) {
               </ButtonLink>
             </Card>
           ) : null}
-
-          {suggestions.length ? (
-            <Card as="section" aria-labelledby="suggested-title" padded={false}>
-              <h2 id="suggested-title" className="px-5 pt-5 text-sm font-semibold text-ink">
-                Suggested from your answers
-              </h2>
-              <ul className="divide-y divide-line">
-                {suggestions.map((r) => (
-                  <li key={r.id} className="px-5 py-4">
-                    <RecommendationItem rec={r} />
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          ) : null}
-
-          {about}
         </aside>
       </div>
     </>

@@ -8,7 +8,6 @@ import {
   EmptyState,
   MasteryBadge,
   PageHeader,
-  Section,
   pluralize,
 } from "@/components/ui";
 import { CompletionMeter, MasteryOverview, MiniLabel } from "@/components/student/Bits";
@@ -117,45 +116,36 @@ export default async function UnitPage({ params }: Params) {
             <h2 id="lessons-title" className="font-display text-xl font-semibold tracking-[-0.01em] text-ink">
               Learn and practise
             </h2>
-            <p className="mt-1 text-sm text-muted">Each topic&apos;s lessons, then exercises to apply them, then quizzes. Open anything at any time.</p>
-            <Card padded={false} className="mt-4 overflow-hidden">
+            <p className="mt-1 text-sm text-muted">Read a lesson, then practise it.</p>
+            <div className="mt-4">
               <UnitPathList unit={unit} o={o} nextLessonId={nextLesson?.id ?? null} />
-            </Card>
+            </div>
           </section>
 
-          <Section
-            title="Skills and practice"
-            id="skills"
-            description="Each skill's level comes from your graded answers. Practice without hints counts the most."
-          >
-            <div className="space-y-5">
-              {unit.topics.map((topic) => (
-                <Card key={topic.id} as="section" aria-labelledby={`topic-${topic.id}-title`} padded={false} id={`topic-${topic.id}`} className="scroll-mt-24 overflow-hidden">
-                  <h3 id={`topic-${topic.id}-title`} className="border-b border-line px-5 py-3.5 text-sm font-semibold text-ink sm:px-6">
-                    {topic.title}
-                  </h3>
-                  <ul className="divide-y divide-line">
-                    {topic.skillIds.map((id) => {
-                      const s = o.states.get(id);
-                      return (
-                        <li key={id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 sm:px-6">
-                          <Link href={`/app/skills/${id}`} className="min-w-0 text-sm font-medium text-ink underline-offset-4 hover:underline">
-                            {skillName(id)}
-                          </Link>
-                          <span className="flex items-center gap-2">
-                            <MasteryBadge level={s?.level ?? "not_started"} needsReview={s?.needsReview} size="sm" />
-                            <ButtonLink href={`/app/practice/${id}`} size="sm" variant="secondary" aria-label={`Practise ${skillName(id)}`}>
-                              Practise
-                            </ButtonLink>
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </Card>
-              ))}
-            </div>
-          </Section>
+          <details className="group mt-8 rounded-card border border-line bg-surface" id="skills">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-2 px-5 py-3 text-sm font-semibold text-ink hover:bg-surface-2 sm:px-6 [&::-webkit-details-marker]:hidden">
+              <span>Your skill levels ({unit.skillIds.length})</span>
+              <ChevronDown aria-hidden="true" className="size-4 text-faint transition-transform group-open:rotate-180" />
+            </summary>
+            <ul className="divide-y divide-line border-t border-line">
+              {unit.skillIds.map((id) => {
+                const s = o.states.get(id);
+                return (
+                  <li key={id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-2.5 sm:px-6">
+                    <Link href={`/app/skills/${id}`} className="min-w-0 text-sm text-ink underline-offset-4 hover:underline">
+                      {skillName(id)}
+                    </Link>
+                    <span className="flex items-center gap-3">
+                      <MasteryBadge level={s?.level ?? "not_started"} needsReview={s?.needsReview} size="sm" />
+                      <Link href={`/app/practice/${id}`} className="text-xs font-medium text-accent underline-offset-4 hover:underline" aria-label={`Practise ${skillName(id)}`}>
+                        Practise
+                      </Link>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
 
           {objectiveCount ? (
             <details className="group mt-8 rounded-card border border-line bg-surface">
@@ -197,26 +187,26 @@ export default async function UnitPage({ params }: Params) {
               {r ? (
                 <div>
                   <MiniLabel>Mastery</MiniLabel>
-                  <MasteryOverview rollup={r} label={`Unit ${unit.number} skill mastery`} size="sm" untestedNote />
+                  <MasteryOverview rollup={r} label={`Unit ${unit.number} skill mastery`} size="sm" />
                 </div>
               ) : null}
             </div>
           </Card>
 
+          {dueHere.length ? (
           <Card as="section" aria-labelledby="review-title">
             <h2 id="review-title" className="flex items-center gap-2 text-sm font-semibold text-ink">
               <RotateCcw aria-hidden="true" className="size-4 text-faint" />
               Review
             </h2>
             <p className="mt-1 text-sm text-muted">
-              {dueHere.length
-                ? `${pluralize(dueHere.length, "skill")} in this unit ${dueHere.length === 1 ? "is" : "are"} ready for review: ${dueHere.map(skillName).join(", ")}.`
-                : "Nothing in this unit is due for review. Mixed review still helps keep skills fresh."}
+              {pluralize(dueHere.length, "skill")} ready for review: {dueHere.map(skillName).join(", ")}.
             </p>
             <ButtonLink href={`/app/review/${course.id}`} variant="secondary" size="sm" className="mt-3">
               Start course review
             </ButtonLink>
           </Card>
+          ) : null}
 
           <ButtonLink href={courseHref} variant="link" size="sm">
             Back to the {course.name} roadmap

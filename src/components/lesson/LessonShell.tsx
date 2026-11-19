@@ -1,7 +1,8 @@
 "use client";
 /**
  * LessonShell — the focused three-zone lesson layout.
- *   left   : course/unit lesson navigation (inline from xl, a drawer below)
+ *   outline: course/unit lesson navigation, in a drawer (kept off the page so
+ *            the lesson has the room)
  *   center : the lesson
  *   right  : AI tutor + related skills (inline and collapsible from 2xl,
  *            a drawer below)
@@ -68,17 +69,12 @@ export function LessonShell({ nav, aside, tutor, children }: LessonShellProps) {
 
   return (
     <LessonUIContext.Provider value={ui}>
-      <div className={cn("xl:grid xl:grid-cols-[13rem_minmax(0,1fr)] xl:gap-8", !asideCollapsed && "2xl:grid-cols-[13rem_minmax(0,1fr)_18rem]")}>
-        <nav aria-label="Lessons in this course" className="hidden xl:block">
-          <div className="sticky top-20 max-h-[calc(100dvh-6rem)] overflow-y-auto pb-6 pr-1">{nav}</div>
-        </nav>
-
-        <div className="min-w-0">
+      <div className={cn(!asideCollapsed && "2xl:grid 2xl:grid-cols-[minmax(0,1fr)_18rem] 2xl:gap-10")}>
+        <div className="mx-auto min-w-0 max-w-3xl">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-2 empty:hidden">
-            <Button variant="secondary" size="sm" className="xl:hidden" icon={<ListTree aria-hidden="true" className="size-4" />} onClick={() => setNavOpen(true)}>
-              Lessons
+            <Button variant="secondary" size="sm" icon={<ListTree aria-hidden="true" className="size-4" />} onClick={() => setNavOpen(true)}>
+              Course outline
             </Button>
-            <span className="hidden xl:block" />
             <Button
               variant="secondary"
               size="sm"
@@ -89,7 +85,7 @@ export function LessonShell({ nav, aside, tutor, children }: LessonShellProps) {
                 else setAsideDrawer(true);
               }}
             >
-              Tutor &amp; related skills
+              Tutor
             </Button>
           </div>
           {children}
@@ -110,7 +106,7 @@ export function LessonShell({ nav, aside, tutor, children }: LessonShellProps) {
         ) : null}
       </div>
 
-      <Drawer open={navOpen} onClose={() => setNavOpen(false)} title="Lessons">
+      <Drawer open={navOpen} onClose={() => setNavOpen(false)} title="Course outline">
         <div onClick={(e) => (e.target as HTMLElement).closest("a") && setNavOpen(false)}>{nav}</div>
       </Drawer>
       <Drawer open={asideDrawer} onClose={() => setAsideDrawer(false)} title="Tutor & related skills">

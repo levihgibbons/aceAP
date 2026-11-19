@@ -1,9 +1,10 @@
 /**
- * LessonNav — course → unit → lesson navigation with per-lesson status
+ * LessonNav — course → unit → lesson navigation with per-lesson status and
+ * each topic's practice sets
  * (icon + text, never colour alone). Server Component.
  */
 import Link from "next/link";
-import { CheckCircle2, ChevronRight, Circle, CircleDot } from "lucide-react";
+import { CheckCircle2, ChevronRight, Circle, CircleDot, Dumbbell } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { CourseTree } from "@/modules/curriculum/queries";
 
@@ -93,6 +94,22 @@ export function LessonNav({
                             </li>
                           );
                         })}
+                        {u.assessments
+                          .filter((a) => a.topicId === tp.id && a.kind === "exercise")
+                          .map((a) => (
+                            <li key={a.id}>
+                              <Link
+                                href={`/app/assessments/${a.id}`}
+                                className="flex items-start gap-2 rounded-md px-1.5 py-1.5 text-ink-2 transition-colors hover:bg-sunken hover:text-ink"
+                              >
+                                <Dumbbell aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent" />
+                                <span className="min-w-0 flex-1 leading-snug">
+                                  <span className="sr-only">Practice: </span>
+                                  {a.title}
+                                </span>
+                              </Link>
+                            </li>
+                          ))}
                       </ul>
                     </li>
                   ))}
